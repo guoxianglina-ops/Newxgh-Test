@@ -31,5 +31,5 @@ deploy-netlify/
 # 临时数据
 server-data.json
 
-# 测试文件
+# 测试文件（保留在 backend-handoff 的除外）
 test_qr_import*.xlsx
