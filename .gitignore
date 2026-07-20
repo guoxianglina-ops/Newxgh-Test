@@ -1,0 +1,35 @@
+# 系统文件
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# 临时脚本（_patch*.js, _cleanup*.js 等）
+_patch*.js
+_cleanup*.js
+_rewrite*.js
+_delbatch*.js
+gen_docx.js
+
+# 旧版本文件（v开头 .html）
+v*.html
+
+# Node.js
+node_modules/
+package-lock.json
+
+# 环境变量/密钥
+.env
+.env.local
+
+# IDE
+.vscode/
+.idea/
+
+# 旧部署目录（Supabase 时代）
+deploy-netlify/
+
+# 临时数据
+server-data.json
+
+# 测试文件
+test_qr_import*.xlsx
