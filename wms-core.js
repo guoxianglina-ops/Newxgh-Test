@@ -750,7 +750,7 @@ function gCode(prefix,dbKey){
 var WMS_API = (function() {
   if (window.location.protocol === 'file:') return null;
 
-  var API_BASE_URL = '%%API_BASE_URL%%';  // 部署时替换为后端地址，如 http://192.168.1.100:8899/api
+  var API_BASE_URL = 'https://dhxsymzypgmqcafabcbf.supabase.co/rest/v1';  // TODO: 后端部署后替换为实际地址
   var cache = null;
   var localVersion = 0;
   var initReady = false;
@@ -877,7 +877,6 @@ var WMS_API = (function() {
           } else {
             cache = remote;
           }
-          localVersion = remoteVer;
           localVersion = remoteVer;
           localStorage.setItem('wms_v2', JSON.stringify(cache));
           console.log('[WMS] pulled v' + remoteVer);
