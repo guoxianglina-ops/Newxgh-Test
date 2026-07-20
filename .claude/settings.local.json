@@ -124,7 +124,27 @@
       "Bash(cp wms-core.js backend-handoff/wms-core.js)",
       "Bash(git commit *)",
       "Bash(node _restore_supabase.js)",
-      "Bash(git commit -m '修复：deploy-netlify 恢复 Supabase 原生路径以保持线上测试可用 *)"
+      "Bash(git commit -m '修复：deploy-netlify 恢复 Supabase 原生路径以保持线上测试可用 *)",
+      "Bash(git --no-pager log --oneline -3)",
+      "Bash(curl -sI https://github.com)",
+      "Bash(ping -n 2 github.com)",
+      "Bash(cmd.exe /c \"set\")",
+      "Bash(git pull *)",
+      "Bash(git checkout *)",
+      "Bash(curl -sS --connect-timeout 10 https://github.com)",
+      "Bash(curl -sS --connect-timeout 10 https://gitee.com)",
+      "Bash(git --no-pager log --oneline --all)",
+      "Bash(ssh -T git@github.com)",
+      "Bash(ssh-keyscan github.com)",
+      "Bash(mkdir -p 'C:\\\\Users\\\\26556/.ssh')",
+      "Bash(ssh-keygen -t ed25519 -C guoxianglina@gmail.com -f 'C:\\\\Users\\\\26556/.ssh/id_ed25519' -N '')",
+      "Read(//c/Users/26556/.ssh/**)",
+      "Bash(ssh -o ConnectTimeout=10 -T git@github.com)",
+      "Bash(ssh -vT git@github.com)",
+      "Bash(ssh -o IdentitiesOnly=yes -i 'C:\\\\Users\\\\26556/.ssh/id_ed25519' -T git@github.com)",
+      "Bash(git --no-pager log --oneline origin/main -5)",
+      "Bash(git --no-pager log --oneline -5)",
+      "Bash(git rm *)"
     ]
   }
 }
