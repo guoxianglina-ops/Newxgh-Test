@@ -122,7 +122,9 @@
       "Bash(git push *)",
       "Bash(cp deploy-netlify/wms-core.js deploy-netlify/wms-core.js.bak)",
       "Bash(cp wms-core.js backend-handoff/wms-core.js)",
-      "Bash(git commit *)"
+      "Bash(git commit *)",
+      "Bash(node _restore_supabase.js)",
+      "Bash(git commit -m '修复：deploy-netlify 恢复 Supabase 原生路径以保持线上测试可用 *)"
     ]
   }
 }

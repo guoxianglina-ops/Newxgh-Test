@@ -750,7 +750,8 @@ function gCode(prefix,dbKey){
 var WMS_API = (function() {
   if (window.location.protocol === 'file:') return null;
 
-  var API_BASE_URL = 'https://dhxsymzypgmqcafabcbf.supabase.co/rest/v1';  // TODO: 后端部署后替换为实际地址
+  var API_BASE_URL = 'https://dhxsymzypgmqcafabcbf.supabase.co/rest/v1';
+  var SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRoeHN5bXp5cGdtcWNhZmFiY2JmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQwNTI3MTUsImV4cCI6MjA5OTYyODcxNX0.wDcLxGb7qm3OGpvZm35gjPmwfbR651zPUHcx7rE8NIE';
   var cache = null;
   var localVersion = 0;
   var initReady = false;
@@ -758,13 +759,19 @@ var WMS_API = (function() {
   var syncTimer = null;
   var saving = false;
 
-  // 通用 headers
+  // Supabase 认证 headers
   var H = {
+    'apikey': SUPABASE_KEY,
+    'Authorization': 'Bearer ' + SUPABASE_KEY,
     'Content-Type': 'application/json'
   };
 
+  // POST JSON 返回 headers（RPC 用）
   var H2 = {
-    'Content-Type': 'application/json'
+    'apikey': SUPABASE_KEY,
+    'Authorization': 'Bearer ' + SUPABASE_KEY,
+    'Content-Type': 'application/json',
+    'Prefer': 'return=representation'
   };
 
   // ===== 初始化 =====
@@ -800,9 +807,9 @@ var WMS_API = (function() {
     function _oneDone() { pending--; if (pending <= 0 && !allDone) { allDone = true; console.log('[WMS] all ID pools allocated'); if (cb) cb(); } }
     for (var k = 0; k < _idPoolKeys.length; k++) {
       (function(key) {
-        fetch(API_BASE_URL + '/id/allocate', {
+        fetch(API_BASE_URL + '/rpc/allocate_ids', {
           method: 'POST', headers: H,
-          body: JSON.stringify({ key: key, count: ID_BLOCK })
+          body: JSON.stringify({ p_key: key, p_count: ID_BLOCK })
         })
         .then(function(r) { return r.text(); })
         .then(function(txt) {
@@ -826,9 +833,9 @@ var WMS_API = (function() {
 
   // 预取 ID（池耗尽时补充）
   function _prefetchIdBlock(key) {
-    fetch(API_BASE_URL + '/id/allocate', {
+    fetch(API_BASE_URL + '/rpc/allocate_ids', {
       method: 'POST', headers: H,
-      body: JSON.stringify({ key: key, count: ID_BLOCK })
+      body: JSON.stringify({ p_key: key, p_count: ID_BLOCK })
     })
     .then(function(r) { return r.text(); })
     .then(function(txt) {
@@ -866,12 +873,12 @@ var WMS_API = (function() {
 
   // ===== 拉取数据 =====
   function _pull(cb) {
-    fetch(API_BASE_URL + '/data', { headers: H })
+    fetch(API_BASE_URL + '/app_data?id=eq.1&select=data,version', { headers: H })
       .then(function(r) { return r.json(); })
-      .then(function(resp) {
-        if (resp && resp.code === 200 && resp.data) {
-          var remote = resp.data;
-          var remoteVer = resp.data.version || 0;
+      .then(function(arr) {
+        if (arr && arr.length > 0 && arr[0].data && typeof arr[0].data === 'object' && Array.isArray(arr[0].data.goods)) {
+          var remote = arr[0].data;
+          var remoteVer = arr[0].version || 0;
           if (cache && localVersion > 0) {
             cache = _mergeData(cache, remote);
           } else {
@@ -959,24 +966,24 @@ var WMS_API = (function() {
   function _doSave(data, expectedVer) {
     if (saving) return;
     saving = true;
-    fetch(API_BASE_URL + '/data', {
+    fetch(API_BASE_URL + '/rpc/save_data_locked', {
       method: 'POST', headers: H2,
-      body: JSON.stringify({ version: expectedVer, data: data })
+      body: JSON.stringify({ p_expected_version: expectedVer, p_data: data })
     })
     .then(function(r) { return r.json(); })
     .then(function(resp) {
       saving = false;
-      if (resp && resp.code === 200) {
-        localVersion = (resp.data && resp.data.version) || (resp.version || (expectedVer + 1));
-        console.log('[WMS] saved v' + localVersion);
-      } else if (resp && resp.code === 409) {
-        console.warn('[WMS] conflict! local v' + expectedVer + ', remote v' + (resp.data ? resp.data.serverVersion : '?'));
-        if (resp.data && resp.data.serverData) {
-          var merged = _mergeData(data, resp.data.serverData);
+      if (resp && resp.success) {
+        localVersion = resp.version;
+        console.log('[WMS] saved v' + resp.version);
+      } else if (resp && !resp.success) {
+        console.warn('[WMS] conflict! local v' + expectedVer + ', remote v' + resp.version);
+        if (resp.data) {
+          var merged = _mergeData(data, resp.data);
           cache = merged;
           localStorage.setItem('wms_v2', JSON.stringify(merged));
-          localVersion = resp.data.serverVersion;
-          setTimeout(function() { _doSave(merged, resp.data.serverVersion); }, 100 + Math.random() * 200);
+          localVersion = resp.version;
+          setTimeout(function() { _doSave(merged, resp.version); }, 100 + Math.random() * 200);
         }
       }
     })
