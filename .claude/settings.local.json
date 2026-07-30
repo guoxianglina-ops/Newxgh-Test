@@ -152,7 +152,9 @@
       "Bash(cp deploy-netlify/ai-assistant.js deploy-netlify/ai-assistant.js.bak)",
       "Bash(cp ai-assistant.js deploy-netlify/ai-assistant.js)",
       "Bash(cp -f wms-core.js deploy-netlify/wms-core.js)",
-      "Bash(cp -f ai-assistant.js deploy-netlify/ai-assistant.js)"
+      "Bash(cp -f ai-assistant.js deploy-netlify/ai-assistant.js)",
+      "Bash(curl -sS -X POST \"https://api.deepseek.com/chat/completions\" -H \"Content-Type: application/json\" -H \"Authorization: Bearer sk-e48b9b959b1141cbb2e31ef4d2ec2bf4\" -d '{\"model\":\"deepseek-chat\",\"messages\":[{\"role\":\"user\",\"content\":\"用一句话介绍仓库管理系统\"}],\"max_tokens\":100}')",
+      "Bash(curl -sS \"https://api.deepseek.com/v1/models\" -H \"Authorization: Bearer sk-e48b9b959b1141cbb2e31ef4d2ec2bf4\")"
     ]
   }
 }

@@ -8,7 +8,7 @@
   // ===== 配置 =====
   var CONFIG = {
     // DeepSeek API 配置（面试演示：替换为你的 API Key）
-    apiKey: '%%DEEPSEEK_API_KEY%%',  // 部署时替换
+    apiKey: '%%DEEPSEEK_API_KEY%%',  // 部署时替换 (支持 OpenAI 兼容的任何 API Base URL)
     apiEndpoint: 'https://api.deepseek.com/chat/completions',
     model: 'deepseek-chat',  // DeepSeek V3
     maxTokens: 1024,
