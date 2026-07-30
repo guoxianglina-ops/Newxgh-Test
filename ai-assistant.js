@@ -10,7 +10,7 @@
     // DeepSeek API 配置（面试演示：替换为你的 API Key）
     apiKey: 'sk-d24c216ea5d04ee8b70f872923ee5703',  // DeepSeek API Key
     apiEndpoint: 'https://api.deepseek.com/chat/completions',
-    model: 'deepseek-chat',  // DeepSeek V3
+    model: 'deepseek-reasoner',  // DeepSeek R1 推理增强
     maxTokens: 1024,
     temperature: 0.7,
 
@@ -410,6 +410,9 @@
 
     var exact = list.filter(function(s) { return (s.name || '').toLowerCase() === q; });
     if (exact.length === 1) return { matched: true, id: exact[0].id, name: exact[0].name };
+
+    // 短名称（≤2字符）不做子串模糊匹配，避免"1"匹配到"优质供应商公司"
+    if (q.length <= 2) return { matched: false, candidates: [] };
 
     var partial = list.filter(function(s) { return (s.name || '').toLowerCase().indexOf(q) >= 0; });
     if (partial.length === 1) return { matched: true, id: partial[0].id, name: partial[0].name };
