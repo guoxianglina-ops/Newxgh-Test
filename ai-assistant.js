@@ -468,8 +468,8 @@
     // 单号
     var code = f.code || (ot.prefix + '-' + dateStr.replace(/-/g,'') + '-' + String(f.id || '').padStart(4,'0'));
 
-    // 账号
-    var accountId = (window.currentUser && window.currentUser.accountId) || '1';
+    // 账号 —— currentUser 是 wms-core.js 的 let 变量，不在 window 上，用 || '1' 兜底
+    var accountId = (typeof currentUser !== 'undefined' && currentUser && currentUser.accountId) || '1';
 
     var order = {
       id: f.id,
@@ -586,14 +586,9 @@
       var ot = CONFIG.operationTypes[task.type];
 
       // 权限检查
-      if (window.hasPerm && !hasPerm(ot.permKey)) {
+      if (window.hasPerm && window.hasPerm(ot.permKey) === false) {
         _updateCardBtns(task.confirmId, 'red', '❌ 无权限');
         _aiAddMsg('assistant', '创建失败：您没有' + ot.label + '的操作权限。');
-        return;
-      }
-      if (!window.currentUser) {
-        _updateCardBtns(task.confirmId, 'red', '❌ 未登录');
-        _aiAddMsg('assistant', '创建失败：请先登录系统。');
         return;
       }
 
