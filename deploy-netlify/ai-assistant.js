@@ -411,9 +411,6 @@
     var exact = list.filter(function(s) { return (s.name || '').toLowerCase() === q; });
     if (exact.length === 1) return { matched: true, id: exact[0].id, name: exact[0].name };
 
-    // 短名称（≤2字符）不做子串模糊匹配，避免"1"匹配到"优质供应商公司"
-    if (q.length <= 2) return { matched: false, candidates: [] };
-
     var partial = list.filter(function(s) { return (s.name || '').toLowerCase().indexOf(q) >= 0; });
     if (partial.length === 1) return { matched: true, id: partial[0].id, name: partial[0].name };
     if (partial.length > 1) return { matched: false, ambiguous: true, candidates: partial.map(function(s) { return { id: s.id, name: s.name }; }) };
