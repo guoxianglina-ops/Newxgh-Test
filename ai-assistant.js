@@ -208,52 +208,119 @@
     var q = query.toLowerCase();
     var result = {};
 
-    // 库存查询
-    if (q.indexOf('库存') >= 0 || q.indexOf('存货') >= 0 || q.indexOf('余量') >= 0) {
-      var inv = [];
-      (db.inventory || []).forEach(function(i) {
-        var g = (db.goods || []).find(function(x) { return x.id === i.goodsId; });
-        var wh = (db.warehouses || []).find(function(x) { return x.id === i.warehouseId; });
-        if (g && i.qty < i.warnQty) {
-          inv.push('⚠️ ' + g.name + '｜' + (wh ? wh.name : '仓' + i.warehouseId) + '｜库存' + i.qty + '（低于预警线' + i.warnQty + '）');
-        }
-      });
-      if (inv.length > 0) result.inventory = inv;
-    }
-
-    // 商品统计
-    if (q.indexOf('商品') >= 0 || q.indexOf('产品') >= 0 || q.indexOf('种类') >= 0) {
-      result.goodsCount = (db.goods || []).length;
-      result.goodsList = (db.goods || []).slice(0, 5).map(function(g) { return g.name; });
-    }
-
-    // 供应商/客户统计
-    if (q.indexOf('供应商') >= 0 || q.indexOf('供货') >= 0) {
-      result.supplierCount = (db.suppliers || []).length;
-    }
-    if (q.indexOf('客户') >= 0) {
-      result.customerCount = (db.customers || []).length;
-    }
-
-    // 订单统计
-    if (q.indexOf('订单') >= 0 || q.indexOf('单据') >= 0 || q.indexOf('业务') >= 0) {
-      result.purchaseOrders = (db.purchaseOrders || []).length;
-      result.salesOrders = (db.salesOrders || []).length;
-      var pending = (db.purchaseOrders || []).filter(function(x) { return x.auditStatus === '待审核'; }).length +
-        (db.salesOrders || []).filter(function(x) { return x.auditStatus === '待审核'; }).length;
-      result.pendingAudit = pending;
-    }
+    // === 始终提供：系统概览（轻量级上下文） ===
+    result.goodsCount = (db.goods || []).length;
+    result.supplierCount = (db.suppliers || []).length;
+    result.customerCount = (db.customers || []).length;
+    result.warehouseCount = (db.warehouses || []).length;
 
     // 待审核统计
-    if (q.indexOf('待审核') >= 0 || q.indexOf('审核') >= 0 || q.indexOf('待办') >= 0) {
-      result.totalPending = 0;
-      var auditLists = ['purchaseOrders','purchaseIn','purchaseReturn','purchasePayments',
-        'salesOrders','salesOut','salesReturn','salesReceipts'];
-      auditLists.forEach(function(key) {
-        if (db[key]) {
-          result.totalPending += db[key].filter(function(x) { return x.auditStatus === '待审核'; }).length;
+    var auditLists = ['purchaseOrders','purchaseIn','purchaseReturn','purchasePayments',
+      'salesOrders','salesOut','salesReturn','salesReceipts'];
+    var totalPending = 0;
+    auditLists.forEach(function(key) {
+      if (db[key]) totalPending += db[key].filter(function(x) { return x.auditStatus === '待审核'; }).length;
+    });
+    result.totalPending = totalPending;
+
+    // === 实体搜索：提取查询中的可能实体名（用分词片段匹配） ===
+    // 把查询拆成 2~6 字的连续片段，逐一匹配商品/供应商/客户/仓库名
+    var segments = [];
+    for (var len = 6; len >= 2; len--) {
+      for (var i = 0; i <= q.length - len; i++) {
+        segments.push(q.substring(i, i + len));
+      }
+    }
+
+    // 商品模糊匹配
+    var matchedGoods = [];
+    segments.forEach(function(seg) {
+      (db.goods || []).forEach(function(g) {
+        var name = (g.name || '').toLowerCase();
+        var code = (g.code || '').toLowerCase();
+        if ((name.indexOf(seg) >= 0 || code.indexOf(seg) >= 0) && !matchedGoods.find(function(m) { return m.id === g.id; })) {
+          // 查找该商品的库存
+          var inv = (db.inventory || []).filter(function(i) { return i.goodsId === g.id; });
+          matchedGoods.push({
+            id: g.id, name: g.name, code: g.code || '', industryType: g.industryType || '',
+            inventory: inv.map(function(i) {
+              var wh = (db.warehouses || []).find(function(w) { return w.id === i.warehouseId; });
+              return { warehouse: wh ? wh.name : ('仓#'+i.warehouseId), qty: i.qty, warnQty: i.warnQty || 0 };
+            })
+          });
         }
       });
+    });
+    if (matchedGoods.length > 0) result.matchedGoods = matchedGoods;
+
+    // 供应商模糊匹配
+    var matchedSuppliers = [];
+    segments.forEach(function(seg) {
+      (db.suppliers || []).forEach(function(s) {
+        var name = (s.name || '').toLowerCase();
+        if (name.indexOf(seg) >= 0 && !matchedSuppliers.find(function(m) { return m.id === s.id; })) {
+          matchedSuppliers.push({ id: s.id, name: s.name, contact: s.contact || '', phone: s.phone || '' });
+        }
+      });
+    });
+    if (matchedSuppliers.length > 0) result.matchedSuppliers = matchedSuppliers;
+
+    // 客户模糊匹配
+    var matchedCustomers = [];
+    segments.forEach(function(seg) {
+      (db.customers || []).forEach(function(c) {
+        var name = (c.name || '').toLowerCase();
+        if (name.indexOf(seg) >= 0 && !matchedCustomers.find(function(m) { return m.id === c.id; })) {
+          matchedCustomers.push({ id: c.id, name: c.name, contact: c.contact || '', phone: c.phone || '' });
+        }
+      });
+    });
+    if (matchedCustomers.length > 0) result.matchedCustomers = matchedCustomers;
+
+    // 仓库模糊匹配
+    var matchedWarehouses = [];
+    segments.forEach(function(seg) {
+      (db.warehouses || []).forEach(function(w) {
+        var name = (w.name || '').toLowerCase();
+        if (name.indexOf(seg) >= 0 && !matchedWarehouses.find(function(m) { return m.id === w.id; })) {
+          matchedWarehouses.push({ id: w.id, name: w.name });
+        }
+      });
+    });
+    if (matchedWarehouses.length > 0) result.matchedWarehouses = matchedWarehouses;
+
+    // === 条件触发：扩展现有业务数据 ===
+    // 库存预警
+    if (q.indexOf('库存') >= 0 || q.indexOf('存货') >= 0 || q.indexOf('余量') >= 0 || q.indexOf('预警') >= 0) {
+      var alerts = [];
+      (db.inventory || []).forEach(function(i) {
+        if (i.qty < i.warnQty) {
+          var g = (db.goods || []).find(function(x) { return x.id === i.goodsId; });
+          var wh = (db.warehouses || []).find(function(x) { return x.id === i.warehouseId; });
+          if (g) alerts.push('⚠️ ' + g.name + '｜' + (wh ? wh.name : '仓#' + i.warehouseId) + '｜库存' + i.qty + '（低于预警线' + i.warnQty + '）');
+        }
+      });
+      if (alerts.length > 0) result.inventoryAlerts = alerts;
+    }
+
+    // 订单统计（含具体匹配）
+    if (q.indexOf('订单') >= 0 || q.indexOf('单据') >= 0 || q.indexOf('业务') >= 0 || q.indexOf('采购') >= 0 || q.indexOf('销售') >= 0) {
+      result.purchaseOrders = (db.purchaseOrders || []).length;
+      result.salesOrders = (db.salesOrders || []).length;
+      var poPending = (db.purchaseOrders || []).filter(function(x) { return x.auditStatus === '待审核'; }).length;
+      var soPending = (db.salesOrders || []).filter(function(x) { return x.auditStatus === '待审核'; }).length;
+      result.pendingAudit = poPending + soPending;
+
+      // 如果匹配到供应商，列出相关采购单
+      if (matchedSuppliers.length > 0) {
+        var relatedPOs = [];
+        matchedSuppliers.forEach(function(sup) {
+          (db.purchaseOrders || []).forEach(function(po) {
+            if (po.supplierId === sup.id) relatedPOs.push(po);
+          });
+        });
+        if (relatedPOs.length > 0) result.relatedPurchaseOrders = relatedPOs.slice(0, 5);
+      }
     }
 
     // 盘点相关
@@ -336,26 +403,60 @@
     // 业务数据
     if (bizData) {
       context += '\n【当前系统实时业务数据】\n';
-      if (bizData.goodsCount !== undefined) {
-        context += '- 商品总数: ' + bizData.goodsCount + ' 个';
-        if (bizData.goodsList) context += '（如 ' + bizData.goodsList.join('、') + '）';
-        context += '\n';
+      context += '- 商品总数: ' + bizData.goodsCount + ' 个, 供应商: ' + bizData.supplierCount + ' 个, 客户: ' + bizData.customerCount + ' 个, 仓库: ' + bizData.warehouseCount + ' 个\n';
+      if (bizData.totalPending !== undefined && bizData.totalPending > 0) {
+        context += '- 所有待审核单据: ' + bizData.totalPending + ' 笔\n';
       }
+      // 匹配到的具体商品
+      if (bizData.matchedGoods && bizData.matchedGoods.length > 0) {
+        context += '- 匹配到的商品:\n';
+        bizData.matchedGoods.forEach(function(g) {
+          context += '  · ' + g.name + '（编码:' + g.code + ' 行业:' + (g.industryType || '通用') + '）';
+          if (g.inventory && g.inventory.length > 0) {
+            context += ' | 库存: ';
+            g.inventory.forEach(function(inv, j) {
+              context += inv.warehouse + ' ' + inv.qty + '件';
+              if (inv.warnQty > 0 && inv.qty < inv.warnQty) context += '⚠️低于预警线(' + inv.warnQty + ')';
+              if (j < g.inventory.length - 1) context += ', ';
+            });
+          } else {
+            context += ' | 暂无库存记录';
+          }
+          context += '\n';
+        });
+      }
+      // 匹配到的供应商
+      if (bizData.matchedSuppliers && bizData.matchedSuppliers.length > 0) {
+        context += '- 匹配到的供应商:\n';
+        bizData.matchedSuppliers.forEach(function(s) {
+          context += '  · ' + s.name + '（联系人:' + (s.contact || '无') + ' 电话:' + (s.phone || '无') + '）\n';
+        });
+      }
+      // 匹配到的客户
+      if (bizData.matchedCustomers && bizData.matchedCustomers.length > 0) {
+        context += '- 匹配到的客户:\n';
+        bizData.matchedCustomers.forEach(function(c) {
+          context += '  · ' + c.name + '（联系人:' + (c.contact || '无') + ' 电话:' + (c.phone || '无') + '）\n';
+        });
+      }
+      // 匹配到的仓库
+      if (bizData.matchedWarehouses && bizData.matchedWarehouses.length > 0) {
+        context += '- 匹配到的仓库: ' + bizData.matchedWarehouses.map(function(w) { return w.name; }).join('、') + '\n';
+      }
+      // 库存预警
+      if (bizData.inventoryAlerts && bizData.inventoryAlerts.length > 0) {
+        context += '- 库存预警:\n';
+        bizData.inventoryAlerts.forEach(function(s) { context += '  ' + s + '\n'; });
+      }
+      // 采购/销售统计（仅在问相关问题时出现）
       if (bizData.purchaseOrders !== undefined) {
         context += '- 采购订单: ' + bizData.purchaseOrders + ' 笔, 销售订单: ' + bizData.salesOrders + ' 笔, 待审核: ' + bizData.pendingAudit + ' 笔\n';
       }
-      if (bizData.totalPending !== undefined) {
-        context += '- 所有待审核单据: ' + bizData.totalPending + ' 笔\n';
-      }
-      if (bizData.supplierCount !== undefined) {
-        context += '- 供应商: ' + bizData.supplierCount + ' 个\n';
-      }
-      if (bizData.customerCount !== undefined) {
-        context += '- 客户: ' + bizData.customerCount + ' 个\n';
-      }
-      if (bizData.inventory && bizData.inventory.length > 0) {
-        context += '- 库存预警:\n';
-        bizData.inventory.forEach(function(s) { context += '  ' + s + '\n'; });
+      if (bizData.relatedPurchaseOrders && bizData.relatedPurchaseOrders.length > 0) {
+        context += '- 关联采购单:\n';
+        bizData.relatedPurchaseOrders.forEach(function(po) {
+          context += '  · #' + po.id + ' 审核状态:' + (po.auditStatus || '未设置') + '\n';
+        });
       }
       if (bizData.checkOrders !== undefined) {
         context += '- 盘点单: ' + bizData.checkOrders + ' 笔\n';
@@ -371,11 +472,12 @@
       '系统背景：这是一款面向中小仓库的Web管理系统，覆盖采购、销售、库存、财务、审核等20+业务模块。\n' +
       '系统是纯前端SPA(无框架)+后端REST API架构。\n\n' +
       '回答规则：\n' +
-      '1. 根据提供的知识库内容回答，如果知识库没有相关信息，诚实说明\n' +
-      '2. 如果提供了业务数据，可结合实际数据给出建议\n' +
-      '3. 回答应简洁、实用、面向操作者\n' +
-      '4. 如果用户问"怎么操作"，给出具体步骤，不要只说概念\n' +
-      '5. 用中文回答';
+      '1. 优先结合"当前系统实时业务数据"中的信息回答用户关于具体实体（商品/仓库/供应商/客户）的问题\n' +
+      '2. 当用户问"XXX能不能入库"时：检查数据中是否匹配到该商品→如找到则说明该商品存在、可以入库（需走采购入库流程）→如未找到则说明系统中还没有该商品，需要先在"商品信息"中新增\n' +
+      '3. 如果提供了业务数据，可结合实际数据给出建议\n' +
+      '4. 回答应简洁、实用、面向操作者\n' +
+      '5. 如果用户问"怎么操作"，给出具体步骤，不要只说概念\n' +
+      '6. 用中文回答，不要编造数据库中不存在的商品名和数字';
 
     var userPrompt = '用户问题：' + query + '\n\n' +
       '相关知识库内容：\n' + context + '\n\n' +
