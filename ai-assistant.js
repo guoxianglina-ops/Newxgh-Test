@@ -266,8 +266,9 @@
 
   // ===== DeepSeek API 调用 =====
   function callDeepSeek(messages, callback) {
-    if (CONFIG.apiKey === '%%DEEPSEEK_API_KEY%%') {
-      callback(null, '[演示模式] DeepSeek API Key 未配置。请替换 ai-assistant.js 中的 %%DEEPSEEK_API_KEY%% 为你的 API Key。\n\n以下为本地 RAG 检索结果（不需要 API Key 也能工作）：');
+    // 如果没有 API Key，返回空（触发降级模式）
+    if (CONFIG.apiKey === '%%DEEPSEEK_API_KEY%%' || !CONFIG.apiKey) {
+      callback(null, null);
       return;
     }
 
