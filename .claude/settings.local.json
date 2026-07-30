@@ -146,7 +146,13 @@
       "Bash(git --no-pager log --oneline -5)",
       "Bash(git rm *)",
       "Bash(node --check deploy-netlify/ai-assistant.js)",
-      "Bash(awk '{print $5, $9}')"
+      "Bash(awk '{print $5, $9}')",
+      "Bash(git commit -m '添加 AI 智能助手：DeepSeek + RAG 知识库 + 浮动聊天窗口 *)",
+      "Bash(node --check ai-assistant.js)",
+      "Bash(cp deploy-netlify/ai-assistant.js deploy-netlify/ai-assistant.js.bak)",
+      "Bash(cp ai-assistant.js deploy-netlify/ai-assistant.js)",
+      "Bash(cp -f wms-core.js deploy-netlify/wms-core.js)",
+      "Bash(cp -f ai-assistant.js deploy-netlify/ai-assistant.js)"
     ]
   }
 }
