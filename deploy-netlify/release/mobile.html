@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=3.0, user-scalable=yes">
+<title>智能仓库管理系统 V2</title>
+<style>
+/* ===== 手机版专属样式：手机优先布局 ===== */
+:root{
+  --pri:#1890ff;--pri-d:#096dd9;--suc:#52c41a;--war:#faad14;--dan:#ff4d4f;
+  --bg:#f5f5f5;--w:#fff;--bd:#e8e8e8;--tx:#333;--tx2:#666;--sh:0 2px 8px rgba(0,0,0,.08);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font:14px/1.6 "Microsoft YaHei","PingFang SC",sans-serif;background:var(--bg);color:var(--tx);min-height:100vh;display:block}
+
+/* ===== 手机版小标签：输入框前的字段名 ===== */
+.m-lbl{display:none;font-size:11px;color:var(--tx2);min-width:32px;flex-shrink:0}
+.modal-b .m-lbl{display:inline}
+
+/* ===== 侧边栏 ===== */
+.side-mask{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.5);z-index:101}
+.side-mask.active{display:block!important}
+.side{width:230px;background:linear-gradient(180deg,#001529,#002140);color:#fff;position:fixed;left:0;top:0;bottom:0;z-index:102;overflow-y:auto;transform:translateX(-230px);transition:transform .3s}
+.side.open{transform:translateX(0)}
+.side .logo{padding:18px 14px;text-align:center;border-bottom:1px solid rgba(255,255,255,.1)}
+.side .logo h1{font-size:17px;font-weight:600}
+.side .logo span{font-size:11px;color:rgba(255,255,255,.4);display:block;margin-top:2px}
+.nav-item{display:flex;align-items:center;padding:14px 20px;color:rgba(255,255,255,.65);cursor:pointer;transition:all .2s;border-left:3px solid transparent;font-size:14px;user-select:none}
+.nav-item:hover{color:#fff;background:rgba(255,255,255,.06)}
+.nav-item.active{color:#fff;background:var(--pri);border-left-color:#fff}
+.nav-item .ico{font-size:16px;margin-right:8px;width:18px;text-align:center}
+.sub-nav{max-height:0;overflow:hidden;transition:max-height .35s;background:rgba(0,0,0,.18)}
+.sub-nav.open{max-height:800px}
+.sub-item{padding:12px 20px 12px 50px;color:rgba(255,255,255,.5);cursor:pointer;font-size:13px;transition:.2s}
+.sub-item:hover,.sub-item.active{color:#fff;background:rgba(255,255,255,.04)}
+
+/* ===== 主区域：全宽单列 ===== */
+.main{margin-left:0;width:100%;display:flex;flex-direction:column;min-height:100vh}
+
+/* ===== 顶部栏：紧凑、触控友好 ===== */
+.head{background:var(--w);padding:0 10px;height:44px;display:flex;align-items:center;box-shadow:0 1px 3px rgba(0,0,0,.06);position:sticky;top:0;z-index:50;gap:8px}
+.head .menu-btn{font-size:18px;cursor:pointer;color:var(--tx2);padding:4px;line-height:1}
+.head .bread{font-size:13px;color:var(--tx2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;min-width:0}
+.head .bread b{color:var(--tx);font-size:13px}
+.head .user{display:flex;align-items:center;gap:6px;font-size:12px;flex-shrink:0}
+
+/* ===== 内容区 ===== */
+.content{flex:1;padding:8px;overflow-y:auto}
+
+/* ===== 卡片：2列网格 ===== */
+.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:12px}
+.scard{background:var(--w);border-radius:8px;padding:12px 10px;box-shadow:var(--sh);display:flex;align-items:center;gap:10px;cursor:pointer;transition:transform .15s}
+.scard:active{transform:scale(.97)}
+.scard .si{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.scard .sinfo h4{font-size:11px;color:var(--tx2);font-weight:400}
+.scard .sinfo .n{font-size:18px;font-weight:700;margin-top:1px}
+.scard .sinfo .sub{font-size:10px;color:var(--tx2)}
+
+/* ===== 工具栏：自动换行 ===== */
+.tbar{background:var(--w);border-radius:8px;padding:10px 12px;margin-bottom:10px;box-shadow:var(--sh);display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.tbar strong{font-size:14px}
+.tbar .spacer{flex:1}
+
+/* ===== 按钮：放大触控区域 ===== */
+.btn{padding:8px 14px;border-radius:6px;border:none;cursor:pointer;font-size:13px;min-height:36px;transition:.2s;display:inline-flex;align-items:center;gap:5px;white-space:nowrap}
+.btn:active{opacity:.8}
+.btn-p{background:var(--pri);color:#fff}.btn-p:hover{background:var(--pri-d)}
+.btn-s{background:var(--suc);color:#fff}
+.btn-w{background:var(--war);color:#fff}
+.btn-pay{background:#722ed1;color:#fff}
+.btn-pay:hover{opacity:0.85}
+.btn-d{background:var(--dan);color:#fff}
+.btn-o{background:var(--w);color:var(--tx);border:1px solid var(--bd)}
+.btn-o:hover{border-color:var(--pri);color:var(--pri)}
+.btn-sm{padding:5px 10px;font-size:12px;min-height:30px}
+.btn-xs{padding:3px 8px;font-size:11px;min-height:26px}
+.is-auditor .tbar .btn-p{display:none!important}
+.is-supervisor .tbar .btn-p{display:inline-flex!important}
+
+/* ===== 输入框/下拉框：防止iOS缩放 ===== */
+input,select,textarea{padding:8px 10px;border:1px solid var(--bd);border-radius:6px;font-size:14px;outline:none;transition:border .2s;font-family:inherit;min-height:36px}
+input:focus,select:focus,textarea:focus{border-color:var(--pri);box-shadow:0 0 0 2px rgba(24,144,255,.15)}
+select{min-width:100px}
+
+/* ===== 表格：横向可滑动 ===== */
+.twrap{background:var(--w);border-radius:8px;box-shadow:var(--sh);overflow-x:auto;-webkit-overflow-scrolling:touch}
+table{width:100%;border-collapse:collapse;min-width:600px}
+thead{background:#fafafa}
+th{padding:10px 10px;text-align:left;font-weight:500;font-size:12px;color:var(--tx2);border-bottom:1px solid var(--bd);white-space:nowrap;position:sticky;top:0;background:#fafafa;z-index:1}
+td{padding:9px 10px;font-size:12px;border-bottom:1px solid #f0f0f0}
+.td-note{max-width:15em;word-break:break-all;overflow-wrap:break-word;white-space:normal}
+tr:hover td{background:#fafafa}
+
+/* ===== 弹窗内编辑表格：变纵向卡片 ===== */
+.modal-b .edt-tbl{min-width:0;width:100%}
+.modal-b .edt-tbl thead{display:none}
+.modal-b .edt-tbl tbody,.modal-b .edt-tbl tbody tr,.modal-b .edt-tbl tbody td{display:block}
+.modal-b .edt-tbl tbody tr{background:var(--w);border:1px solid var(--bd);border-radius:8px;padding:10px 12px;margin-bottom:10px;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.modal-b .edt-tbl tbody td{border:none;padding:4px 0;font-size:13px;display:flex;align-items:center;gap:6px}
+.modal-b .edt-tbl tbody td:empty::before{content:none}
+.modal-b .edt-tbl tbody td input,.modal-b .edt-tbl tbody td select{flex:1;min-width:0}
+.modal-b .edt-tbl tbody td input[type="number"]{width:100%;min-width:0;max-width:none}
+.modal-b .edt-tbl tbody td .btn{flex-shrink:0}
+/* 弹窗内查看表格：保留表头，横向可滑动 */
+.modal-b table:not(.edt-tbl){min-width:0;width:100%}
+.modal-b table:not(.edt-tbl) thead{display:table-header-group}
+.modal-b table:not(.edt-tbl)+.modal-b{overflow-x:auto}
+
+/* ===== 弹窗：底部滑出 / 全屏 ===== */
+.modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.45);z-index:200;display:flex;align-items:flex-end;justify-content:center;animation:fadeIn .15s}
+.modal{background:var(--w);border-radius:12px 12px 0 0;box-shadow:0 -4px 20px rgba(0,0,0,.18);width:100%;max-width:100vw;max-height:90vh;display:flex;flex-direction:column;animation:slideUp .25s}
+.modal.wide{width:100%;max-width:100vw}
+.modal-h{padding:12px 16px;border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between}
+.modal-h h3{font-size:15px;font-weight:600}
+.modal-close{cursor:pointer;font-size:22px;color:var(--tx2);transition:.2s;line-height:1;padding:4px}
+.modal-close:hover{color:var(--dan)}
+.modal-b{padding:12px 14px;overflow-y:auto;flex:1;max-height:60vh}
+.modal-f{padding:10px 14px;border-top:1px solid var(--bd);display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
+.modal-f .btn{flex:0 0 auto}
+
+/* 弹窗内表单：始终单列 */
+.frow{display:grid;grid-template-columns:1fr;gap:10px;margin-bottom:10px}
+.frow.c3{grid-template-columns:1fr}
+.frow.c1{grid-template-columns:1fr}
+.fg label{display:block;font-size:12px;color:var(--tx2);margin-bottom:3px}
+.fg label .req{color:var(--dan)}
+.fg input,.fg select,.fg textarea{width:100%}
+
+/* ===== 标签 ===== */
+.tag{display:inline-block;padding:2px 8px;border-radius:3px;font-size:11px}
+.tag-blue{background:#e6f7ff;color:#1890ff}
+.tag-green{background:#f6ffed;color:#52c41a}
+.tag-red{background:#fff2f0;color:#ff4d4f}
+.tag-orange{background:#fff7e6;color:#faad14}
+.tag-gray{background:#f5f5f5;color:#999}
+
+.alert{padding:10px 14px;border-radius:6px;margin-bottom:12px;font-size:13px}
+.alert-warn{background:#fffbe6;border:1px solid #ffe58f;color:#ad6800}
+.alert-info{background:#e6f7ff;border:1px solid #91d5ff;color:#096dd9}
+.empty{text-align:center;padding:50px 20px;color:var(--tx2)}
+.empty .ico{font-size:40px;margin-bottom:10px}
+.badge-dot{width:7px;height:7px;border-radius:50%;display:inline-block;margin-right:4px}
+.badge-dot.danger{background:var(--dan)}
+.badge-dot.warning{background:var(--war)}
+.hidden{display:none!important}
+
+/* ===== 动画 ===== */
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes slideUp{from{transform:translateY(100%);opacity:0}to{transform:translateY(0);opacity:1}}
+</style>
+</head>
+<body>
+
+<!-- 登录页（未登录时显示） -->
+<div id="loginPage" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:linear-gradient(135deg,#001529,#002140);z-index:9999;flex-direction:column;align-items:center;justify-content:center">
+  <div style="text-align:center;margin-bottom:40px">
+    <div style="font-size:60px">📦</div>
+    <h1 style="color:#fff;font-size:24px;margin:10px 0 4px">象过河仓库管理系统</h1>
+    <p style="color:rgba(255,255,255,.4);font-size:12px">XiangGuoHe WMS v2.13</p>
+  </div>
+  <button onclick="showLogin()" style="padding:12px 60px;background:#1890ff;color:#fff;border:none;border-radius:6px;font-size:16px;cursor:pointer">🔑 登录系统</button>
+</div>
+
+<div class="main" id="main" style="display:none">
+  <div class="head">
+    <span class="menu-btn" onclick="tgSide(event)">☰</span>
+    <div class="bread" id="bread">📍 <b>首页仪表盘</b></div>
+    <div class="user"><span id="alertBadge" class="tag tag-red hidden">0</span><span id="userDisp">👤 管理员</span> <span style="cursor:pointer;color:var(--tx2);margin-left:8px" onclick="confirmLogout()" title="退出登录">⏻</span></div>
+  </div>
+  <div class="content" id="pg"></div>
+</div>
+
+<aside class="side" id="side" style="display:none">
+  <div class="logo"><h1>📦 象过河</h1><span>仓库管理系统 v2.13.0</span></div>
+  <nav id="nav"></nav>
+</aside>
+
+<div id="mc"></div>
+
+<script src="xlsx.full.min.js"></script>
+<script src="wms-core.js"></script>
+<script>
+// ===== 手机版：侧边栏 / 遮罩创建 / 关闭逻辑 =====
+// 1. 动态创建遮罩层
+var maskEl = document.createElement('div');
+maskEl.id = 'sideMask';
+maskEl.className = 'side-mask';
+maskEl.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.5);z-index:101';
+maskEl.addEventListener('click',function(){closeSide();});
+maskEl.addEventListener('touchend',function(){closeSide();});
+document.body.insertBefore(maskEl,document.getElementById('mc'));
+
+// 2. 关闭函数
+function closeSide(){
+  var s=document.getElementById('side');
+  var m=document.getElementById('sideMask');
+  if(s.classList.contains('open')){
+    s.classList.remove('open');
+    m.classList.remove('active');
+  }
+}
+
+// 3. 重写 tgSide → 遮罩跟随
+var _origTgSide=tgSide;
+tgSide=function(e){
+  var s=document.getElementById('side');
+  var m=document.getElementById('sideMask');
+  s.classList.toggle('open');
+  if(s.classList.contains('open')){m.classList.add('active');}
+  else{m.classList.remove('active');}
+  if(e&&e.stopPropagation)e.stopPropagation();
+};
+
+// 4. 全局点击/触摸关闭
+(function(){
+  function _close(e){
+    var s=document.getElementById('side');
+    if(!s.classList.contains('open'))return;
+    if(s.contains(e.target))return;
+    if(e.target.closest&&e.target.closest('.menu-btn'))return;
+    closeSide();
+  }
+  document.addEventListener('click',_close);
+  document.addEventListener('touchend',_close);
+})();
+
+// 5. classList 劫持 → 遮罩跟随
+(function(){
+  var s=document.getElementById('side');
+  var m=document.getElementById('sideMask');
+  var oa=s.classList.add,orem=s.classList.remove,otog=s.classList.toggle;
+  s.classList.add=function(cls){
+    oa.apply(this,arguments);
+    if(cls==='open')m.classList.add('active');
+  };
+  s.classList.remove=function(cls){
+    orem.apply(this,arguments);
+    if(cls==='open')m.classList.remove('active');
+  };
+  s.classList.toggle=function(cls){
+    var r=otog.apply(this,arguments);
+    if(cls==='open'){
+      if(s.classList.contains('open'))m.classList.add('active');
+      else m.classList.remove('active');
+    }
+    return r;
+  };
+})();
+// ===== 手机版自举 ∋ 登录持久化到 localStorage =====
+// 覆盖 initUser：优先从 sessionStorage，再尝试 localStorage（微信扫码新页面恢复）
+var _origInitUser = initUser;
+initUser = function() {
+  var s = sessionStorage.getItem('wms_user');
+  if (s) {
+    currentUser = JSON.parse(s);
+    $('userDisp').textContent = '👤 ' + currentUser.name;
+    if (isAuditor() || isSupervisor()) { document.body.classList.add('is-auditor'); }
+    if (isSupervisor()) { document.body.classList.add('is-supervisor'); }
+    return true;
+  } else {
+    // 尝试 localStorage 恢复（手机微信扫码每次打开新页面）
+    try {
+      var d = JSON.parse(localStorage.getItem('wms_mobile_login'));
+      if (d && d.user && d.expires > Date.now()) {
+        currentUser = d.user;
+        sessionStorage.setItem('wms_user', JSON.stringify(currentUser));
+        $('userDisp').textContent = '👤 ' + currentUser.name;
+        if (isAuditor() || isSupervisor()) { document.body.classList.add('is-auditor'); }
+        if (isSupervisor()) { document.body.classList.add('is-supervisor'); }
+        return true;
+      } else {
+        showLogin();
+        return false;
+      }
+    } catch(e) { showLogin(); return false; }
+  }
+};
+
+// 覆盖 doLogin：登录时也存到 localStorage
+var _origDoLogin = doLogin;
+doLogin = function() {
+  var aid = $('loginAcct').value.trim();
+  var pwd = $('loginPwd').value;
+  if (!aid) { toast('请输入账号'); return; }
+  if (!pwd) { toast('请输入密码'); return; }
+  ensureAccountPasswords();
+  var acct = ACCOUNTS[aid];
+  if (!acct) { toast('账号不存在'); return; }
+  if (acct.password !== pwd) { toast('密码错误'); return; }
+  currentUser = { accountId: aid, name: acct.name, role: acct.role };
+  sessionStorage.setItem('wms_user', JSON.stringify(currentUser));
+  // 存到 localStorage 供微信扫码恢复（24小时有效）
+  localStorage.setItem('wms_mobile_login', JSON.stringify({ user: currentUser, expires: Date.now() + 86400000 }));
+  $('userDisp').textContent = '👤 ' + currentUser.name;
+  if (currentUser.role === 'auditor') { $('userDisp').style.color = '#ff4d4f'; }
+  else if (currentUser.role === 'supervisor') { $('userDisp').style.color = '#722ed1'; }
+  else { $('userDisp').style.color = ''; }
+  if (isAuditor() || isSupervisor()) { document.body.classList.add('is-auditor'); }
+  else { document.body.classList.remove('is-auditor'); }
+  if (isSupervisor()) { document.body.classList.add('is-supervisor'); }
+  else { document.body.classList.remove('is-supervisor'); }
+  var main=document.getElementById('main');
+  if(main) main.style.display='block';
+  var side=document.getElementById('side');
+  if(side) side.style.display='block';
+  var loginPage=document.getElementById('loginPage');
+  if(loginPage) loginPage.style.display='none';
+  renderNav(); nav('dashboard', '首页仪表盘'); updateAuditBadge();
+};
+
+// 覆盖 logout：同时清理 localStorage
+var _origLogout = logout;
+logout = function() {
+  sessionStorage.removeItem('wms_user');
+  localStorage.removeItem('wms_mobile_login');
+  currentUser = null;
+  $('userDisp').textContent = '👤 未登录';
+  document.body.classList.remove('is-auditor');
+  document.body.classList.remove('is-supervisor');
+  var main=document.getElementById('main');
+  if(main) main.style.display='none';
+  var side=document.getElementById('side');
+  if(side) side.style.display='none';
+  var loginPage=document.getElementById('loginPage');
+  if(loginPage) loginPage.style.display='flex';
+  $('mc').innerHTML='';
+  showLogin();
+};
+
+// ===== 自举 =====
+(function initApp() {
+  if (_wms_api_mode === 'api' && WMS_API) {
+    WMS_API.init(function() {
+      renderNav();
+      if(initUser()){
+      var main=document.getElementById('main');
+      if(main) main.style.display='block';
+      var side=document.getElementById('side');
+      if(side) side.style.display='block';
+      var loginPage=document.getElementById('loginPage');
+      if(loginPage) loginPage.style.display='none';
+      setTimeout(handleQuickActions, 500);
+      var savedPage = sessionStorage.getItem('wms_curPage') || 'dashboard';
+      var savedTitle = sessionStorage.getItem('wms_curTitle') || '首页仪表盘';
+      nav(savedPage, savedTitle);
+      }
+    });
+  } else {
+    renderNav();
+    if(initUser()){
+    var main=document.getElementById('main');
+    if(main) main.style.display='block';
+    var side=document.getElementById('side');
+    if(side) side.style.display='block';
+    var loginPage=document.getElementById('loginPage');
+    if(loginPage) loginPage.style.display='none';
+    setTimeout(handleQuickActions, 500);
+    var savedPage = sessionStorage.getItem('wms_curPage') || 'dashboard';
+    var savedTitle = sessionStorage.getItem('wms_curTitle') || '首页仪表盘';
+    nav(savedPage, savedTitle);
+    }
+  }
+})();
+</script>
+</body>
+</html>

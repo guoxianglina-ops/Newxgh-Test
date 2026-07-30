@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>扫码入库/出库 — 二维码生成器</title>
+<style>
+:root{--pri:#1890ff;--pri-d:#096dd9;--suc:#52c41a;--dan:#ff4d4f;--bg:#f5f5f5;--w:#fff;--bd:#e8e8e8;--tx:#333;--tx2:#666}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font:14px/1.6 "Microsoft YaHei","PingFang SC",sans-serif;background:var(--bg);padding:20px}
+.card{max-width:920px;margin:0 auto;background:var(--w);border-radius:12px;box-shadow:0 4px 16px rgba(0,0,0,.1);padding:24px;margin-bottom:16px}
+h2{margin-bottom:4px}
+.sub{color:var(--tx2);font-size:12px;margin-bottom:16px}
+.row{display:flex;gap:10px;align-items:center;margin-bottom:10px;flex-wrap:wrap}
+.fg{display:flex;align-items:center;gap:6px;white-space:nowrap}
+.fg label{margin-right:2px;font-size:13px;color:var(--tx)}
+.fg input,.fg select{padding:5px 8px;border:1px solid var(--bd);border-radius:5px;font-size:13px}
+.fg input:focus,.fg select:focus{outline:none;border-color:var(--pri)}
+.fg input[type=number]{width:70px}
+.fg select{min-width:100px}
+.fg .chk-lbl{font-size:12px;color:var(--tx2);margin-left:2px}
+.btn{color:#fff;border:none;border-radius:6px;cursor:pointer;padding:7px 14px;font-size:13px;white-space:nowrap;display:inline-flex;align-items:center;gap:4px}
+.btn:hover{opacity:0.9}
+.btn-p{background:var(--pri)}
+.btn-s{background:var(--suc)}
+.btn-d{background:var(--dan)}
+.btn-o{background:var(--w);color:var(--tx);border:1px solid var(--bd)}
+.section-title{font-size:14px;font-weight:600;margin:14px 0 8px;padding-bottom:6px;border-bottom:1px solid var(--bd)}
+.sep{color:var(--bd);margin:0 4px}
+/* 打印预览卡片 */
+.print-card{border:1px solid #ccc;border-radius:8px;padding:16px;text-align:center;background:#fff;page-break-inside:avoid}
+.print-card img{display:block;margin:0 auto}
+.print-card .code-label{font-size:18px;font-weight:700;margin-top:8px;color:var(--tx)}
+.print-card .info-table{width:100%;margin-top:8px;border-collapse:collapse;font-size:12px}
+.print-card .info-table td{padding:3px 6px;border:1px solid #ddd;text-align:left}
+.print-card .info-table td:nth-child(odd){background:#f9f9f9;width:30%;font-weight:600}
+#qrcodes{display:flex;flex-wrap:wrap;gap:14px;margin-top:12px}
+.qr-item{text-align:center;border:1px solid var(--bd);padding:10px;border-radius:8px;background:#fafafa;position:relative;width:270px}
+.qr-item img{display:block;margin:0 auto}
+.qr-item .code-label{font-size:14px;font-weight:700;color:var(--tx);margin:4px 0}
+.qr-item .info-grid{display:grid;grid-template-columns:1fr 1fr;gap:2px 8px;text-align:left;font-size:11px;color:var(--tx2);margin-top:4px}
+.qr-item .info-grid span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.qr-item .info-grid .info-key{color:var(--tx2);text-align:right}
+.qr-item .btns{margin-top:6px;display:flex;gap:4px;justify-content:center}
+.qr-item .btns button{font-size:11px;padding:4px 10px}
+.qr-item .del-btn{position:absolute;top:4px;right:4px;width:22px;height:22px;border-radius:50%;background:var(--dan);color:#fff;border:none;cursor:pointer;font-size:12px;line-height:20px;text-align:center;display:none}
+.qr-item:hover .del-btn{display:block}
+.tip{padding:8px 12px;background:#fffbe6;border-radius:6px;font-size:12px;color:#ad6800;margin-top:12px;line-height:1.7}
+.empty-state{text-align:center;padding:40px;color:var(--tx2)}
+</style>
+</head>
+<body>
+
+<div class="card">
+  <h2>📦 扫码入库 / 出库 — 二维码生成器</h2>
+  <p class="sub">生成商品专属二维码。手机相机扫码后自动进入手机版并创建入库/出库单。</p>
+
+  <!-- ====== 全局配置 ====== -->
+  <div class="section-title">⚙️ 全局配置（所有二维码共用，可锁定各项参数）</div>
+  <div class="row">
+    <div class="fg">
+      <label>📋 类型</label>
+      <select id="cfgAction" onchange="onActionChange()">
+        <option value="quick-in">采购入库</option>
+        <option value="quick-out">销售出库</option>
+      </select>
+    </div>
+    <span class="sep">|</span>
+    <div class="fg">
+      <label>🏠 仓库</label>
+      <select id="cfgWhId"><option value="">不预设</option></select>
+      <input type="checkbox" id="cfgWhLock"><span class="chk-lbl">锁定</span>
+    </div>
+    <span class="sep">|</span>
+    <div class="fg" id="cfgSupGroup">
+      <label>🏭 供应商</label>
+      <select id="cfgSupId"><option value="">不预设</option></select>
+      <input type="checkbox" id="cfgSupLock"><span class="chk-lbl">锁定</span>
+    </div>
+    <div class="fg" id="cfgCustGroup" style="display:none">
+      <label>👤 客户</label>
+      <select id="cfgCustId"><option value="">不预设</option></select>
+      <input type="checkbox" id="cfgCustLock"><span class="chk-lbl">锁定</span>
+    </div>
+    <span class="sep">|</span>
+    <div class="fg">
+      <label>📦 数量</label>
+      <input id="cfgQty" type="number" min="1" value="1">
+      <input type="checkbox" id="cfgQtyLock"><span class="chk-lbl">锁定</span>
+    </div>
+    <span class="sep">|</span>
+    <div class="fg">
+      <label>💰 单价</label>
+      <input id="cfgPrice" type="number" step="0.01" value="0" placeholder="留空">
+      <input type="checkbox" id="cfgPriceLock"><span class="chk-lbl">锁定</span>
+    </div>
+  </div>
+
+  <!-- ====== 批量生成 ====== -->
+  <div class="section-title">🔄 批量生成</div>
+  <div class="row">
+    <div class="fg">
+      <label>📦 生成数量</label>
+      <input id="batchCount" type="number" min="1" value="5">
+    </div>
+    <span style="font-size:12px;color:var(--tx2)">（基于已有编号递增，已有 <b id="batchCurCount">0</b> 个二维码）</span>
+    <button class="btn btn-p" onclick="genBatch()">🔄 全部生成</button>
+    <button class="btn btn-s" onclick="printAll()" id="btnPrintAll" disabled>🖨 全部打印</button>
+    <button class="btn btn-d" onclick="clearAllQR()" id="btnClearAll" disabled>🗑 一键删除</button>
+  </div>
+
+  <!-- ====== 逐条定制 ====== -->
+  <div class="section-title">✏️ 逐条定制（覆盖全局配置）</div>
+  <div class="row">
+    <div class="fg">
+      <label>🔍 商品</label>
+      <select id="singleGoods"><option value="">选择商品…</option></select>
+    </div>
+    <div class="fg">
+      <label>📦 数量</label>
+      <input id="singleQty" type="number" min="1" placeholder="继承全局" style="width:70px">
+    </div>
+    <div class="fg">
+      <label>💰 单价</label>
+      <input id="singlePrice" type="number" step="0.01" placeholder="继承全局" style="width:80px">
+    </div>
+    <div class="fg">
+      <label>🏠 仓库</label>
+      <select id="singleWh"><option value="">继承全局</option></select>
+    </div>
+    <div class="fg" id="singleSupGroup">
+      <label>🏭 供应商</label>
+      <select id="singleSup"><option value="">继承全局</option></select>
+    </div>
+    <div class="fg" id="singleCustGroup" style="display:none">
+      <label>👤 客户</label>
+      <select id="singleCust"><option value="">继承全局</option></select>
+    </div>
+    <button class="btn btn-o" onclick="genSingle()">➕ 添加</button>
+  </div>
+</div>
+
+<!-- ====== 结果区 ====== -->
+<div class="card">
+  <div class="section-title">📋 已生成的二维码 <span style="font-weight:400;color:var(--tx2);font-size:12px" id="qrCount"></span></div>
+  <div id="qrcodes"><div class="empty-state">👆 使用上方批量生成或逐条定制来创建二维码</div></div>
+  <div class="tip">
+    💡 <b>使用方法</b>：生成二维码 → 点击🖨打印 → 贴到商品上 → 手机相机扫码 → 自动打开手机版并创建入库/出库单。<br>
+    💡 <b>锁定</b>：勾选对应字段旁的「锁定」后，手机端扫码时该字段不可修改。未勾选锁定的字段在手机端可自由编辑。<br>
+    💡 <b>一键创建</b>：二维码包含全部必填字段（数量/单价/仓库/供应商/客户）且均锁定时，扫码后自动创建单据，无需手动确认。<br>
+    💡 <b>编号规则</b>：每个二维码有独立编号（QR-YYYYMMDD-NNN），同一天内编号递增，次日重新从001开始。<br>
+    💡 <b>打印二维码</b>：打印内容与预览完全一致，包含编号、商品名称、数量、单价、仓库、供应商等全部信息。
+  </div>
+</div>
+
+<script>
+// ===== 加载 WMS 核心数据 =====
+function loadWMS(){
+  var raw=localStorage.getItem('wms_v2');
+  if(!raw) return null;
+  try { return JSON.parse(raw); } catch(e) { return null; }
+}
+
+var DB=loadWMS();
+if(!DB) DB={goods:[],suppliers:[],customers:[],warehouses:[]};
+
+// 填充下拉框
+function fillSelect(id, list, textFn){
+  var sel=document.getElementById(id);
+  if(!sel) return;
+  var cur=sel.value;
+  list.forEach(function(item){
+    var opt=document.createElement('option');
+    opt.value=item.id;
+    opt.textContent=typeof textFn==='function'?textFn(item):item.name;
+    sel.appendChild(opt);
+  });
+  if(cur) sel.value=cur;
+}
+
+fillSelect('cfgWhId', DB.warehouses||[]);
+fillSelect('cfgSupId', DB.suppliers||[]);
+fillSelect('cfgCustId', DB.customers||[]);
+fillSelect('singleWh', DB.warehouses||[]);
+fillSelect('singleSup', DB.suppliers||[]);
+fillSelect('singleCust', DB.customers||[]);
+fillSelect('singleGoods', DB.goods||[], function(g){return g.name+' ('+(g.spec||'')+') — #'+g.id});
+
+// 类型切换
+function onActionChange(){
+  var isIn=document.getElementById('cfgAction').value==='quick-in';
+  document.getElementById('cfgSupGroup').style.display=isIn?'':'none';
+  document.getElementById('cfgCustGroup').style.display=isIn?'none':'';
+  document.getElementById('singleSupGroup').style.display=isIn?'':'none';
+  document.getElementById('singleCustGroup').style.display=isIn?'none':'';
+}
+document.getElementById('cfgAction').addEventListener('change',onActionChange);
+onActionChange();
+
+// ===== 编号管理 =====
+function todayKey(){var d=new Date();return d.getFullYear()+('0'+(d.getMonth()+1)).slice(-2)+('0'+d.getDate()).slice(-2)}
+
+// 从 localStorage 读取/写入编号计数
+function getNextCode(){
+  var key='qr_code_seq_'+todayKey();
+  var seq=parseInt(localStorage.getItem(key)||'0')||0;
+  seq++;
+  localStorage.setItem(key, seq);
+  return 'QR-'+todayKey()+'-'+String(seq).padStart(3,'0');
+}
+
+function getCurrentSeq(){
+  var key='qr_code_seq_'+todayKey();
+  return parseInt(localStorage.getItem(key)||'0')||0;
+}
+
+// 更新批量生成数量提示
+function updateBatchHint(){
+  document.getElementById('batchCurCount').textContent=qrItems.length;
+}
+updateBatchHint();
+
+// ===== 辅助函数 =====
+function getCfg(){
+  return {
+    action: document.getElementById('cfgAction').value,
+    whId: document.getElementById('cfgWhId').value||'',
+    whLock: document.getElementById('cfgWhLock').checked,
+    supId: (document.getElementById('cfgSupGroup').style.display!=='none')?(document.getElementById('cfgSupId').value||''):'',
+    supLock: document.getElementById('cfgSupLock').checked,
+    custId: (document.getElementById('cfgCustGroup').style.display!=='none')?(document.getElementById('cfgCustId').value||''):'',
+    custLock: document.getElementById('cfgCustLock').checked,
+    qty: document.getElementById('cfgQty').value||'',
+    qtyLock: document.getElementById('cfgQtyLock').checked,
+    price: document.getElementById('cfgPrice').value||'',
+    priceLock: document.getElementById('cfgPriceLock').checked
+  };
+}
+
+function getDefaultSup(goodsId){
+  if(!DB) return '';
+  var g=DB.goods.find(function(x){return x.id===parseInt(goodsId)});
+  if(g&&g.defaultSupplierId) return g.defaultSupplierId;
+  if(DB.purchaseIn){
+    var piList=DB.purchaseIn.filter(function(x){return x.auditStatus==='已审核'}).reverse();
+    for(var i=0;i<piList.length;i++){
+      if(piList[i].details&&piList[i].details.some(function(d){return d.goodsId===parseInt(goodsId)})){
+        return piList[i].supplierId;
+      }
+    }
+  }
+  return '';
+}
+
+// 构建 URL：锁定的参数才编码到 URL 中强制锁定
+function buildURL(cfg, goodsId, overrides){
+  var base='https://test-project-xgh.pages.dev';
+  var act=overrides.action||cfg.action;
+  var url=base+'/mobile.html?action='+act+'&goodsId='+goodsId;
+  // 逐条覆盖或全局值
+  var q=overrides.qty!=null?overrides.qty:cfg.qty;
+  var p=overrides.price!=null?overrides.price:cfg.price;
+  var w=overrides.whId!=null?overrides.whId:cfg.whId;
+  var sup=overrides.supId!=null?overrides.supId:(cfg.supId||getDefaultSup(goodsId));
+  var cust=overrides.custId!=null?overrides.custId:cfg.custId;
+  // 锁定标记：逐条没覆盖就用全局锁定
+  var whLock=overrides.whLock!=null?overrides.whLock:cfg.whLock;
+  var qtyLock=overrides.qtyLock!=null?overrides.qtyLock:cfg.qtyLock;
+  var priceLock=overrides.priceLock!=null?overrides.priceLock:cfg.priceLock;
+  var supLock=overrides.supLock!=null?overrides.supLock:cfg.supLock;
+  var custLock=overrides.custLock!=null?overrides.custLock:cfg.custLock;
+  if(q) url+='&qty='+q+(qtyLock?'&qtyLock=1':'');
+  if(p) url+='&price='+p+(priceLock?'&priceLock=1':'');
+  if(w) url+='&whId='+w+(whLock?'&whLock=1':'');
+  if(sup) url+='&supId='+sup+(supLock?'&supLock=1':'');
+  if(cust) url+='&custId='+cust+(custLock?'&custLock=1':'');
+  return url;
+}
+
+function getGName(goodsId){
+  if(!DB) return '未知商品';
+  var g=DB.goods.find(function(x){return x.id===parseInt(goodsId)});
+  return g?g.name+' ('+(g.spec||'')+')':'商品#'+goodsId;
+}
+
+function getWhName(whId){
+  if(!DB||!whId) return '-';
+  var w=DB.warehouses.find(function(x){return x.id===parseInt(whId)});
+  return w?w.name:'仓库#'+whId;
+}
+
+function getSupName(supId){
+  if(!DB||!supId) return '-';
+  var s=DB.suppliers.find(function(x){return x.id===parseInt(supId)});
+  return s?s.name:'供应商#'+supId;
+}
+
+function getCustName(custId){
+  if(!DB||!custId) return '-';
+  var c=DB.customers.find(function(x){return x.id===parseInt(custId)});
+  return c?c.name:'客户#'+custId;
+}
+
+// ===== 二维码条目管理 =====
+var qrItems=[];  // 从 localStorage 恢复
+(function(){
+  try{
+    var saved=localStorage.getItem('wms_qr_items');
+    if(saved) qrItems=JSON.parse(saved);
+  }catch(e){qrItems=[]}
+})();
+
+function addQRItem(item){
+  if(qrItems.some(function(x){return x.url===item.url})) return;
+  qrItems.push(item);
+  saveQRItems();
+  renderQRList();
+  updateBatchHint();
+}
+
+function delQRItem(idx){
+  qrItems.splice(idx,1);
+  saveQRItems();
+  renderQRList();
+  updateBatchHint();
+}
+
+function renderQRList(){
+  var container=document.getElementById('qrcodes');
+  var countEl=document.getElementById('qrCount');
+  var printBtn=document.getElementById('btnPrintAll');
+  if(qrItems.length===0){
+    container.innerHTML='<div class="empty-state">👆 使用上方批量生成或逐条定制来创建二维码</div>';
+    countEl.textContent='';
+    printBtn.disabled=true;document.getElementById('btnClearAll').disabled=true;
+    return;
+  }
+  countEl.textContent='（共 '+qrItems.length+' 个）';
+  printBtn.disabled=false;document.getElementById('btnClearAll').disabled=false;
+  var h='';
+  qrItems.forEach(function(item, idx){
+    var qrSrc='https://api.qrserver.com/v1/create-qr-code/?size=200x200&format=png&data='+encodeURIComponent(item.url);
+    var actLabel=item.action==='quick-in'?'采购入库':'销售出库';
+    var lockLabel=function(v){return v?' 🔒':''};
+    h+='<div class="qr-item">';
+    h+='<button class="del-btn" onclick="delQRItem('+idx+')" title="删除">✕</button>';
+    h+='<img src="'+qrSrc+'" width="200" height="200" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'block\'">';
+    h+='<span style="display:none;color:var(--dan);font-size:12px">❌ 生成失败</span>';
+    h+='<div class="code-label">'+item.code+'</div>';
+    h+='<div style="font-size:13px;font-weight:600;color:var(--tx)">'+item.goodsName+'</div>';
+    h+='<div class="info-grid">';
+    h+='<span class="info-key">类型:</span><span>'+actLabel+'</span>';
+    h+='<span class="info-key">数量:</span><span>'+item.qty+lockLabel(item.qtyLock)+'</span>';
+    h+='<span class="info-key">单价:</span><span>¥'+item.price+lockLabel(item.priceLock)+'</span>';
+    h+='<span class="info-key">仓库:</span><span>'+item.whName+lockLabel(item.whLock)+'</span>';
+    if(item.action==='quick-in'){
+      h+='<span class="info-key">供应商:</span><span>'+item.supName+lockLabel(item.supLock)+'</span>';
+    } else {
+      h+='<span class="info-key">客户:</span><span>'+item.custName+lockLabel(item.custLock)+'</span>';
+    }
+    h+='</div>';
+    h+='<div class="btns">';
+    h+='<button class="btn btn-s btn-xs" onclick="printSingle('+idx+')">🖨 打印</button>';
+    h+='</div>';
+    h+='</div>';
+  });
+  container.innerHTML=h;
+}
+
+// ===== 构建条目信息对象 =====
+function buildItem(cfg, goodsId, overrides){
+  var code=getNextCode();
+  var act=overrides.action||cfg.action;
+  var q=overrides.qty!=null?overrides.qty:cfg.qty;
+  var p=overrides.price!=null?overrides.price:cfg.price;
+  var w=overrides.whId!=null?overrides.whId:cfg.whId;
+  var sup=overrides.supId!=null?overrides.supId:(cfg.supId||getDefaultSup(goodsId));
+  var cust=overrides.custId!=null?overrides.custId:cfg.custId;
+  var whLock=overrides.whLock!=null?overrides.whLock:cfg.whLock;
+  var qtyLock=overrides.qtyLock!=null?overrides.qtyLock:cfg.qtyLock;
+  var priceLock=overrides.priceLock!=null?overrides.priceLock:cfg.priceLock;
+  var supLock=overrides.supLock!=null?overrides.supLock:cfg.supLock;
+  var custLock=overrides.custLock!=null?overrides.custLock:cfg.custLock;
+  var url=buildURL(cfg, goodsId, overrides);
+  return {
+    url:url, code:code, goodsId:goodsId, goodsName:getGName(goodsId),
+    action:act, qty:q||'-', price:p||'-',
+    whId:w, whName:getWhName(w),
+    supId:sup, supName:getSupName(sup),
+    custId:cust, custName:getCustName(cust),
+    whLock:whLock, qtyLock:qtyLock, priceLock:priceLock, supLock:supLock, custLock:custLock
+  };
+}
+
+// ===== 批量生成 =====
+function genBatch(){
+  var cfg=getCfg();
+  var count=parseInt(document.getElementById('batchCount').value)||5;
+  if(count<=0){alert('请输入生成数量');return;}
+  var added=0;
+  var baseGoods=DB.goods;
+  if(!baseGoods||!baseGoods.length){toastMsg('⚠ 没有商品数据');return;}
+  // 按已有二维码数量 + 1 作为起始索引
+  var startIdx=qrItems.length;
+  for(var i=0;i<count;i++){
+    var g=baseGoods[(startIdx+i)%baseGoods.length];
+    if(!g) continue;
+    var item=buildItem(cfg, g.id, {});
+    var exists=qrItems.some(function(x){return x.url===item.url});
+    if(!exists){addQRItem(item);added++}
+  }
+  if(added>0){toastMsg('✅ 已添加 '+added+' 个二维码')}
+  else{toastMsg('⚠ 二维码已存在，无新增')}
+}
+
+// ===== 逐条添加 =====
+function genSingle(){
+  var cfg=getCfg();
+  var goodsId=document.getElementById('singleGoods').value;
+  if(!goodsId){toastMsg('⚠ 请选择商品');return;}
+  var overrides={};
+  var qv=document.getElementById('singleQty').value;
+  if(qv) overrides.qty=qv;
+  var pv=document.getElementById('singlePrice').value;
+  if(pv) overrides.price=pv;
+  var wv=document.getElementById('singleWh').value;
+  if(wv) overrides.whId=wv;
+  var sv=document.getElementById('singleSup').value;
+  if(sv) overrides.supId=sv;
+  var cv=document.getElementById('singleCust').value;
+  if(cv) overrides.custId=cv;
+  var item=buildItem(cfg, goodsId, overrides);
+  if(qrItems.some(function(x){return x.url===item.url})){
+    toastMsg('⚠ 此二维码已存在');
+    return;
+  }
+  addQRItem(item);
+  // 清空单条输入
+  document.getElementById('singleQty').value='';
+  document.getElementById('singlePrice').value='';
+  document.getElementById('singleWh').value='';
+  document.getElementById('singleSup').value='';
+  document.getElementById('singleCust').value='';
+  toastMsg('✅ 已添加');
+}
+
+// ===== 打印（与预览完全一致） =====
+function printSingle(idx){
+  var item=qrItems[idx];
+  if(!item) return;
+  var qrSrc='https://api.qrserver.com/v1/create-qr-code/?size=250x250&format=png&data='+encodeURIComponent(item.url);
+  var actLabel=item.action==='quick-in'?'采购入库':'销售出库';
+  var lockLabel=function(v){return v?' 🔒':''};
+  var supplierRow='';
+  if(item.action==='quick-in'){
+    supplierRow='<tr><td>供应商</td><td>'+item.supName+lockLabel(item.supLock)+'</td></tr>';
+  }else{
+    supplierRow='<tr><td>客户</td><td>'+item.custName+lockLabel(item.custLock)+'</td></tr>';
+  }
+  var win=window.open('','_blank');
+  win.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><title>'+item.code+' - '+item.goodsName+'</title></head>');
+  win.document.write('<body style="text-align:center;padding:20px;font-family:\'Microsoft YaHei\',sans-serif">');
+  win.document.write('<div class="print-card" style="max-width:380px;margin:0 auto;border:2px solid #333;border-radius:10px;padding:20px;text-align:center">');
+  win.document.write('<div style="font-size:20px;font-weight:700;margin-bottom:2px">'+item.code+'</div>');
+  win.document.write('<div style="font-size:15px;font-weight:600;margin-bottom:10px;color:#333">'+item.goodsName+'</div>');
+  win.document.write('<img src="'+qrSrc+'" width="250" height="250" style="margin:0 auto;display:block">');
+  win.document.write('<table style="width:100%;margin-top:10px;border-collapse:collapse;font-size:13px;border:1px solid #ddd">');
+  win.document.write('<tr><td style="padding:5px 10px;background:#f5f5f5;font-weight:600;width:35%">类型</td><td style="padding:5px 10px">'+actLabel+'</td></tr>');
+  win.document.write('<tr><td style="padding:5px 10px;background:#f5f5f5;font-weight:600">数量</td><td style="padding:5px 10px">'+item.qty+lockLabel(item.qtyLock)+'</td></tr>');
+  win.document.write('<tr><td style="padding:5px 10px;background:#f5f5f5;font-weight:600">单价</td><td style="padding:5px 10px">¥'+item.price+lockLabel(item.priceLock)+'</td></tr>');
+  win.document.write('<tr><td style="padding:5px 10px;background:#f5f5f5;font-weight:600">仓库</td><td style="padding:5px 10px">'+item.whName+lockLabel(item.whLock)+'</td></tr>');
+  win.document.write(supplierRow);
+  win.document.write('</table>');
+  win.document.write('<p style="font-size:11px;color:#999;margin-top:8px">手机相机扫描二维码，自动创建入库/出库单</p>');
+  win.document.write('</div></body></html>');
+  win.document.close();
+  setTimeout(function(){win.print()},600);
+}
+
+function printAll(){
+  for(var i=0;i<qrItems.length;i++){
+    printSingle(i);
+  }
+}
+
+function saveQRItems(){
+  try{localStorage.setItem('wms_qr_items',JSON.stringify(qrItems))}catch(e){}
+}
+
+function clearAllQR(){
+  if(confirm('确定要删除全部 '+qrItems.length+' 个二维码吗？此操作不可撤销。')){
+    qrItems=[];
+    saveQRItems();
+    renderQRList();
+    updateBatchHint();
+    toastMsg('已删除全部二维码');
+  }
+}
+
+// ===== Toast =====
+function toastMsg(msg){
+  var el=document.getElementById('toast');
+  if(!el){
+    el=document.createElement('div');
+    el.id='toast';
+    el.style.cssText='position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#333;color:#fff;padding:10px 24px;border-radius:8px;font-size:14px;z-index:9999;transition:opacity .3s;pointer-events:none';
+    document.body.appendChild(el);
+  }
+  el.textContent=msg;
+  el.style.opacity='1';
+  clearTimeout(el._t);
+  el._t=setTimeout(function(){el.style.opacity='0'},2000);
+}
+
+// 页面加载恢复
+window.onload=function(){renderQRList();updateBatchHint();}
+</script>
+</body>
+</html>

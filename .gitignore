@@ -25,8 +25,8 @@ package-lock.json
 .vscode/
 .idea/
 
-# 旧部署目录（Supabase 时代）
-deploy-netlify/
+# 旧部署目录（Supabase 时代） — 已改为 Git 跟踪以支持 Cloudflare Pages 自动部署
+# deploy-netlify/
 
 # 临时数据
 server-data.json
