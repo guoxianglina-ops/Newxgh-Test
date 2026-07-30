@@ -174,7 +174,9 @@
       "Bash(curl -sS \"https://raw.githubusercontent.com/guoxianglina-ops/Newxgh-Test/main/deploy-netlify/index.html\")",
       "Bash(curl -sI \"https://test-project-xgh.pages.dev/ai-assistant.js\")",
       "Bash(curl -sSI \"https://test-project-xgh.pages.dev/deploy-netlify/index.html\")",
-      "Bash(curl -sS \"https://test-project-xgh.pages.dev/ai-assistant.js\")"
+      "Bash(curl -sS \"https://test-project-xgh.pages.dev/ai-assistant.js\")",
+      "Bash(curl -sSI \"https://test-project-xgh.pages.dev/\")",
+      "Bash(curl -sS \"https://api.cloudflare.com/client/v4/accounts\")"
     ]
   }
 }
