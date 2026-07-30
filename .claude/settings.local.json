@@ -154,7 +154,12 @@
       "Bash(cp -f wms-core.js deploy-netlify/wms-core.js)",
       "Bash(cp -f ai-assistant.js deploy-netlify/ai-assistant.js)",
       "Bash(curl -sS -X POST \"https://api.deepseek.com/chat/completions\" -H \"Content-Type: application/json\" -H \"Authorization: Bearer sk-e48b9b959b1141cbb2e31ef4d2ec2bf4\" -d '{\"model\":\"deepseek-chat\",\"messages\":[{\"role\":\"user\",\"content\":\"用一句话介绍仓库管理系统\"}],\"max_tokens\":100}')",
-      "Bash(curl -sS \"https://api.deepseek.com/v1/models\" -H \"Authorization: Bearer sk-e48b9b959b1141cbb2e31ef4d2ec2bf4\")"
+      "Bash(curl -sS \"https://api.deepseek.com/v1/models\" -H \"Authorization: Bearer sk-e48b9b959b1141cbb2e31ef4d2ec2bf4\")",
+      "Bash(node -e 'require\\(\"fs\"\\).writeFileSync\\(\"/tmp/deepseek_test.json\",JSON.stringify\\({model:\"deepseek-chat\",messages:[{role:\"user\",content:\"say hello in 3 words\"}],max_tokens:30}\\)\\)')",
+      "Bash(curl -sS -X POST \"https://api.deepseek.com/chat/completions\" -H \"Content-Type: application/json\" -H \"Authorization: Bearer sk-d24c216ea5d04ee8b70f872923ee5703\" -d @/tmp/deepseek_test.json)",
+      "Bash(echo '{\"model\":\"deepseek-chat\",\"messages\":[{\"role\":\"user\",\"content\":\"say hi in 3 words\"}],\"max_tokens\":30}')",
+      "Bash(curl -sS -X POST \"https://api.deepseek.com/chat/completions\" -H \"Content-Type: application/json\" -H \"Authorization: Bearer sk-d24c216ea5d04ee8b70f872923ee5703\" -d @/tmp/ds.json)",
+      "Bash(curl -sS -X POST \"https://api.deepseek.com/chat/completions\" -H \"Content-Type: application/json\" -H \"Authorization: Bearer sk-d24c216ea5d04ee8b70f872923ee5703\" -d @D:/test_ds.json)"
     ]
   }
 }
