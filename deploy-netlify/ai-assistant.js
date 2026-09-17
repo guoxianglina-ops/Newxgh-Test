@@ -8,7 +8,7 @@
   // ===== 配置 =====
   var CONFIG = {
     // DeepSeek API 配置（面试演示：替换为你的 API Key）
-    apiKey: 'sk-d24c216ea5d04ee8b70f872923ee5703',  // DeepSeek API Key
+    apiKey: '%%DEEPSEEK_API_KEY%%',  // DeepSeek API Key
     apiEndpoint: 'https://api.deepseek.com/chat/completions',
     model: 'deepseek-reasoner',  // DeepSeek R1 推理增强
     maxTokens: 1024,

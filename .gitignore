@@ -33,3 +33,15 @@ server-data.json
 
 # 测试文件（保留在 backend-handoff 的除外）
 test_qr_import*.xlsx
+
+# 本地 AI 助手配置（含会话记录与命令行历史，不公开）
+.claude/settings.local.json
+
+# 一次性恢复 / 重写脚本
+_restore*.js
+
+# 调试日志
+*.log
+
+# 个人票据等与项目无关的资料
+发票识别结果.md

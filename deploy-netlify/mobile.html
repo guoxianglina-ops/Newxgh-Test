@@ -177,7 +177,37 @@ tr:hover td{background:#fafafa}
 
 <div id="mc"></div>
 
-<script src="xlsx.full.min.js"></script>
+<!-- 首屏加载骨架屏（纯 CSS，不依赖任何外部资源；系统渲染完成后自动移除） -->
+<style>
+#wmsBoot{position:fixed;left:0;top:0;right:0;bottom:0;z-index:99999;background:#f5f5f5;display:flex;align-items:center;justify-content:center;flex-direction:column}
+#wmsBoot .sp{width:34px;height:34px;border:3px solid #d9d9d9;border-top-color:#1890ff;border-radius:50%;animation:wmsSpin .8s linear infinite}
+#wmsBoot .tx{margin-top:14px;font:13px/1.6 "Microsoft YaHei","PingFang SC",sans-serif;color:#888}
+@keyframes wmsSpin{to{transform:rotate(360deg)}}
+</style>
+<div id="wmsBoot"><div class="sp"></div><div class="tx">正在加载系统…</div></div>
+<script>
+(function(){
+  var removed=false;
+  function hide(){
+    if(removed)return;removed=true;
+    var b=document.getElementById('wmsBoot');
+    if(!b)return;
+    b.style.transition='opacity .25s';
+    b.style.opacity='0';
+    setTimeout(function(){if(b.parentNode)b.parentNode.removeChild(b)},260);
+  }
+  window.wmsHideBoot=hide;
+  var n=0;
+  var t=setInterval(function(){
+    n++;
+    var lp=document.getElementById('loginPage');
+    var pg=document.getElementById('pg')||document.getElementById('mc');
+    var loginShown=lp&&lp.style.display!=='none'&&lp.style.display!=='';
+    var contentReady=pg&&pg.children.length>0;
+    if(loginShown||contentReady||n>80){clearInterval(t);hide();}
+  },100);
+})();
+</script>
 <script src="wms-core.js"></script>
 <script>
 // ===== 手机版：侧边栏 / 遮罩创建 / 关闭逻辑 =====

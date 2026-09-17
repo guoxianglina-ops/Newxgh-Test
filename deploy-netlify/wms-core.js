@@ -1,18 +1,38 @@
-// 引入 pdf.js 用于发票识别（等待加载完成后设置 worker）
 // ===== wms-core.js: 象过河仓库管理系统共享核心 =====
 // 此文件被 index.html 和 mobile.html 共同加载
 // 不要在末尾添加版本号或自举调用——它们由各页面自行处理
 var pdfjsLib=window.pdfjsLib||{};
-(function(){
-  var s=document.createElement('script');
-  s.src='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
-  s.onload=function(){
-    if(window.pdfjsLib&&window.pdfjsLib.GlobalWorkerOptions){
-      window.pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-    }
-  };
-  document.head.appendChild(s);
-})()
+// pdf.js 按需加载：只在「发票识别」时才拉取，首屏不再请求境外 CDN（原来加载即请求，实测占约 1 秒）
+var _pdfQueue=null;
+function loadPdfJS(cb){
+  if(window.pdfjsLib&&window.pdfjsLib.getDocument){cb(null);return}
+  if(_pdfQueue){_pdfQueue.push(cb);return}
+  _pdfQueue=[cb];
+  var settled=false;
+  function finish(err){
+    if(settled)return;settled=true;
+    var q=_pdfQueue;_pdfQueue=null;
+    for(var i=0;i<q.length;i++)q[i](err);
+  }
+  function loadFrom(base,done){
+    var s=document.createElement('script');
+    s.src=base+'pdf.min.js';
+    s.onload=function(){
+      if(window.pdfjsLib&&window.pdfjsLib.GlobalWorkerOptions){
+        window.pdfjsLib.GlobalWorkerOptions.workerSrc=base+'pdf.worker.min.js';
+      }
+      done(null);
+    };
+    s.onerror=function(){done(new Error('load failed'))};
+    document.head.appendChild(s);
+  }
+  loadFrom('',function(e1){
+    if(!e1){finish(null);return}
+    loadFrom('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/',function(e2){
+      finish(e2?new Error('pdf.js 加载失败（本地与 CDN 均不可用）'):null);
+    });
+  });
+}
 // ============ 常量 ============
 const INDUSTRIES = {
   general:{name:'通用商品',icon:'📦',fields:['code','name','spec','model','unit','barcode','category','costPrice','retailPrice']},
@@ -780,11 +800,18 @@ var WMS_API = (function() {
     var local = localStorage.getItem('wms_v2');
     if (local) { try { cache = JSON.parse(local); } catch(e) {} }
     if (cb) initCallbacks.push(cb);
-    // 并行拉取数据和预分配 ID
-    var n = 2, done = 0;
-    function _check() { done++; if (done >= n) { initReady = true; var cbs = initCallbacks.slice(); initCallbacks = []; for (var i = 0; i < cbs.length; i++) cbs[i](); } }
-    _pull(function() { _check(); });
-    _initIdPools(function() { _check(); });
+    function _finish() { initReady = true; var cbs = initCallbacks.slice(); initCallbacks = []; for (var i = 0; i < cbs.length; i++) cbs[i](); }
+    // 先用一个请求探测后端：不可达就直接走本地模式，跳过 37 个必然失败的 ID 池请求
+    // （原来无论后端死活都会并行发 37 个请求，失败时会把首屏渲染一起拖住）
+    _pull(function(reachable) {
+      if (reachable === false) {
+        _wms_api_mode = 'local';
+        console.warn('[WMS] 后端不可达，已切换为本地存储模式（跳过 ID 池分配）');
+        _finish();
+        return;
+      }
+      _initIdPools(function() { _finish(); });
+    });
   }
 
   // ===== 初始化 ID 池 =====
@@ -873,9 +900,17 @@ var WMS_API = (function() {
 
   // ===== 拉取数据 =====
   function _pull(cb) {
+    var settled = false;
+    var timer = setTimeout(function() {
+      if (settled) return; settled = true;
+      console.warn('[WMS] 后端响应超时（3s），按不可达处理');
+      if (!cache) cache = initDB();
+      if (cb) cb(false);
+    }, 3000);
     fetch(API_BASE_URL + '/app_data?id=eq.1&select=data,version', { headers: H })
       .then(function(r) { return r.json(); })
       .then(function(arr) {
+        if (settled) return; settled = true; clearTimeout(timer);
         if (arr && arr.length > 0 && arr[0].data && typeof arr[0].data === 'object' && Array.isArray(arr[0].data.goods)) {
           var remote = arr[0].data;
           var remoteVer = arr[0].version || 0;
@@ -890,12 +925,13 @@ var WMS_API = (function() {
         } else {
           if (!cache) cache = initDB();
         }
-        if (cb) setTimeout(function() { cb(); }, 0);
+        if (cb) setTimeout(function() { cb(true); }, 0);
       })
       .catch(function(e) {
+        if (settled) return; settled = true; clearTimeout(timer);
         console.error('[WMS] pull err:', e ? (e.message || e) : 'unknown');
         if (!cache) cache = initDB();
-        if (cb) setTimeout(function() { cb(); }, 0);
+        if (cb) setTimeout(function() { cb(false); }, 0);
       });
   }
 
@@ -2318,24 +2354,39 @@ function qrPrintSelected(){
 // 持久化
 function qrImportLoad(){try{var s=localStorage.getItem('wms_qr_import');if(s)qrImportRows=JSON.parse(s)}catch(e){qrImportRows=[]}}
 function qrImportSave(){try{localStorage.setItem('wms_qr_import',JSON.stringify(qrImportRows))}catch(e){}}
+// 按需加载 XLSX 库：首屏不再加载（省 835KB），第一次用 Excel 导入时才拉取
+var _xlsxQueue=null;
+function loadXLSX(cb){
+  if(typeof XLSX!=='undefined'){cb(null);return}
+  if(_xlsxQueue){_xlsxQueue.push(cb);return}
+  _xlsxQueue=[cb];
+  var s=document.createElement('script');
+  s.src='xlsx.full.min.js';
+  s.onload=function(){var q=_xlsxQueue;_xlsxQueue=null;for(var i=0;i<q.length;i++)q[i](null)};
+  s.onerror=function(){var q=_xlsxQueue;_xlsxQueue=null;for(var i=0;i<q.length;i++)q[i](new Error('load failed'))};
+  document.head.appendChild(s);
+}
 function qrImportHandleFile(file){
   if(!file){toast('请选择文件');return}
   if(!file.name.match(/\.(xlsx|xls|csv)$/i)){toast('仅支持 .xlsx / .xls / .csv 格式');return}
-  if(typeof XLSX==='undefined'){toast('XLSX库未加载，请刷新页面重试');return}
-  var reader=new FileReader();
-  reader.onload=function(e){
-    try{
-      var data=new Uint8Array(e.target.result);
-      var wb=XLSX.read(data,{type:'array'});
-      var sheetName=wb.SheetNames[0];
-      if(!sheetName){toast('Excel文件中没有工作表');return}
-      var sheet=wb.Sheets[sheetName];
-      var rows=XLSX.utils.sheet_to_json(sheet,{header:1,defval:''});
-      if(!rows||rows.length===0){toast('工作表为空');return}
-      qrImportParseRows(rows);
-    }catch(err){toast('解析Excel失败: '+err.message);console.error('Excel解析错误:',err)}
-  };
-  reader.readAsArrayBuffer(file);
+  if(typeof XLSX==='undefined') toast('首次使用，正在加载 Excel 解析库…');
+  loadXLSX(function(loadErr){
+    if(loadErr||typeof XLSX==='undefined'){toast('Excel 解析库加载失败，请检查网络后重试');return}
+    var reader=new FileReader();
+    reader.onload=function(e){
+      try{
+        var data=new Uint8Array(e.target.result);
+        var wb=XLSX.read(data,{type:'array'});
+        var sheetName=wb.SheetNames[0];
+        if(!sheetName){toast('Excel文件中没有工作表');return}
+        var sheet=wb.Sheets[sheetName];
+        var rows=XLSX.utils.sheet_to_json(sheet,{header:1,defval:''});
+        if(!rows||rows.length===0){toast('工作表为空');return}
+        qrImportParseRows(rows);
+      }catch(err){toast('解析Excel失败: '+err.message);console.error('Excel解析错误:',err)}
+    };
+    reader.readAsArrayBuffer(file);
+  });
 }
 function qrImportParseRows(rows){
   var headerMap={
@@ -4277,7 +4328,12 @@ function parseInvoicePDF(){
     var typedarray=new Uint8Array(e.target.result);
     function doParse(){
       if(typeof window.pdfjsLib==='undefined'||!window.pdfjsLib.getDocument){
-        setTimeout(doParse,500);return;
+        if(statusEl){statusEl.innerHTML='<span style="color:#1890ff">正在加载 PDF 解析库…</span>'}
+        loadPdfJS(function(pdfErr){
+          if(pdfErr){if(statusEl){statusEl.innerHTML='<span style="color:#f5222d">PDF 解析库加载失败，请检查网络后重试</span>'}return}
+          doParse();
+        });
+        return;
       }
       window.pdfjsLib.getDocument({data:typedarray}).promise.then(function(pdf){
         var allPages=[];
