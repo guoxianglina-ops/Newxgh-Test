@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>郭相麟 · 作品集</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  :root{
+    --pri:#1890ff;--pri-d:#096dd9;--tx:#1a1a1a;--tx2:#5a6472;--tx3:#8c98a8;
+    --bd:#e6ebf2;--bg:#f6f8fb;--w:#fff;--sh:0 1px 2px rgba(16,24,40,.04),0 8px 24px rgba(16,24,40,.06);
+  }
+  body{font:15px/1.75 -apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei","PingFang SC",sans-serif;color:var(--tx);background:var(--bg);-webkit-font-smoothing:antialiased}
+  .wrap{max-width:1000px;margin:0 auto;padding:0 20px}
+
+  /* 头部 */
+  .hero{background:linear-gradient(135deg,#001529 0%,#003a8c 60%,#096dd9 100%);color:#fff;padding:64px 0 56px}
+  .hero h1{font-size:34px;font-weight:600;letter-spacing:.5px;margin-bottom:10px}
+  .hero .sub{font-size:15px;color:rgba(255,255,255,.78);line-height:1.9;max-width:680px}
+  .hero .track{display:inline-block;margin-top:16px;padding:4px 14px;border-radius:20px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.24);font-size:13px}
+  .links{margin-top:26px;display:flex;flex-wrap:wrap;gap:10px}
+  .links a{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;border-radius:8px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.22);color:#fff;text-decoration:none;font-size:14px;transition:.2s}
+  .links a:hover{background:rgba(255,255,255,.22)}
+  .links a.pri{background:#fff;color:var(--pri-d);border-color:#fff;font-weight:600}
+  .links a.pri:hover{background:#f0f7ff}
+
+  /* 正文 */
+  main{padding:44px 0 72px}
+  .lead{font-size:15px;color:var(--tx2);line-height:2.1;margin-bottom:44px;padding-left:18px;border-left:3px solid var(--pri)}
+  .sec-title{font-size:20px;font-weight:600;margin:0 0 6px}
+  .sec-desc{font-size:14px;color:var(--tx3);margin-bottom:22px}
+
+  /* 项目卡片 */
+  .card{background:var(--w);border:1px solid var(--bd);border-radius:14px;padding:26px 28px;margin-bottom:20px;box-shadow:var(--sh)}
+  .card.feature{padding:0;overflow:hidden}
+  .card-top{display:flex;flex-wrap:wrap;align-items:baseline;gap:10px;margin-bottom:6px}
+  .card h3{font-size:18px;font-weight:600}
+  .badge{font-size:11px;padding:2px 9px;border-radius:5px;background:#e6f7ff;color:var(--pri-d);border:1px solid #bae0ff;font-weight:600}
+  .badge.on{background:#f6ffed;color:#389e0d;border-color:#b7eb8f}
+  .card .solves{font-size:14px;color:var(--tx2);line-height:1.95;margin:10px 0 14px}
+  .card ul{list-style:none;margin:0 0 14px}
+  .card ul li{font-size:14px;color:var(--tx2);line-height:1.95;padding-left:16px;position:relative}
+  .card ul li::before{content:"";position:absolute;left:2px;top:12px;width:5px;height:5px;border-radius:50%;background:var(--pri);opacity:.55}
+  .tags{display:flex;flex-wrap:wrap;gap:7px;margin-top:14px}
+  .tags span{font-size:12px;color:var(--tx2);background:#f1f5fa;border:1px solid var(--bd);border-radius:5px;padding:3px 10px}
+  .card .go{display:inline-block;margin-top:16px;font-size:14px;color:var(--pri);text-decoration:none;font-weight:600}
+  .card .go:hover{text-decoration:underline}
+
+  .shots{background:#fafcff;border-top:1px solid var(--bd);padding:20px 28px 24px}
+  .shots img{width:100%;border:1px solid var(--bd);border-radius:8px;display:block;margin-bottom:12px;box-shadow:0 2px 10px rgba(16,24,40,.07)}
+  .shots img:last-child{margin-bottom:0}
+  .shots .cap{font-size:12px;color:var(--tx3);margin:-6px 0 14px 2px}
+  .inner{padding:26px 28px 22px}
+
+  /* 数据条 */
+  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:12px;margin:18px 0 6px}
+  .stats div{background:#f7faff;border:1px solid var(--bd);border-radius:9px;padding:12px 14px}
+  .stats b{display:block;font-size:19px;color:var(--pri-d);font-weight:600;line-height:1.3}
+  .stats i{font-style:normal;font-size:12px;color:var(--tx3)}
+
+  footer{border-top:1px solid var(--bd);padding:28px 0 40px;font-size:13px;color:var(--tx3);text-align:center}
+  footer a{color:var(--pri);text-decoration:none}
+
+  @media(max-width:640px){
+    .hero{padding:44px 0 40px}.hero h1{font-size:26px}
+    .card,.inner{padding:20px}.shots{padding:16px 20px 20px}
+    body{font-size:14px}
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <h1>郭相麟</h1>
+    <p class="sub">独立做过完整的业务系统，也做过让 Agent 去操作软件的工具。<br>关注方向：Agent 如何真正落到业务里，以及 AI 与工程软件、硬件之间的那层接口。</p>
+    <span class="track">2026「进化酒馆」Agent 黑客松 · 深圳站 · 报名赛道 03 原生 Agent</span>
+    <div class="links">
+      <a class="pri" href="https://test-project-xgh.pages.dev/" target="_blank" rel="noopener">在线系统 · 象过河 WMS</a>
+      <a href="https://ai-mbti.xyz/" target="_blank" rel="noopener">在线产品 · AI 创业者 MBTI</a>
+      <a href="./wms-docs.html">仓储系统详细文档</a>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <p class="lead">
+    我做的项目基本围绕同一件事：<strong>把那些原本只能靠人点、靠人手算的流程，交给一个能被验证的系统或 Agent 去做。</strong>
+    下面是七个项目的说明，前两个可以直接在线打开。
+  </p>
+
+  <!-- 1. 象过河 WMS -->
+  <h2 class="sec-title">项目</h2>
+  <p class="sec-desc">按与「原生 Agent」赛道的相关度排序</p>
+
+  <div class="card feature">
+    <div class="inner">
+      <div class="card-top">
+        <h3>象过河仓库管理系统（内置 AI 助手）</h3>
+        <span class="badge on">已上线</span>
+        <span class="badge">主力项目</span>
+      </div>
+      <p class="solves">
+        <strong>解决的问题：</strong>中小仓库普遍用纸质单或 Excel 管库存，员工必须走到电脑前手动录入；电脑端和手机端数据不互通；出了质量问题追溯不到具体批次；制单人、审核人、主管之间没有清晰的状态流转。
+        我用一套 Web 端系统覆盖了 20+ 个业务模块，核心是<strong>二维码扫码出入库</strong>——生成二维码、打印贴标、手机扫码自动建单，员工不用回电脑前。
+      </p>
+      <ul>
+        <li><strong>AI 助手（Agent 部分）</strong>：内置操作型 AI，接 DeepSeek，可以不只问答——通过多轮对话直接创建采购单和销售单，带确认卡片、信息补全和主动提议；检索层用 RAG 结合业务实时数据做跨模块分析</li>
+        <li><strong>容错设计</strong>：没有 API Key 时自动降级为纯本地检索，系统不会瘫</li>
+        <li><strong>数据层</strong>：PostgreSQL JSONB 单表存储，前端做乐观锁并发控制与 ID 预分配池；断网自动降级到本地存储</li>
+        <li><strong>业务深度</strong>：全链路批次溯源、FIFO 批次消耗、三级角色与审核状态机、库存预警与跨仓调拨</li>
+        <li><strong>可验证</strong>：为 AI 助手写了 30 条测试用例分 6 大类，其中专门有一类「不需要 AI 的用例」，用来界定哪些操作不该交给模型</li>
+      </ul>
+      <div class="stats">
+        <div><b>约 4,700</b><i>行手写前端 JS</i></div>
+        <div><b>20+</b><i>业务模块</i></div>
+        <div><b>70+</b><i>版本迭代</i></div>
+        <div><b>约 2 个月</b><i>独立开发</i></div>
+      </div>
+      <div class="tags">
+        <span>原生 JS SPA</span><span>REST API</span><span>PostgreSQL / JSONB</span>
+        <span>Supabase</span><span>DeepSeek</span><span>RAG</span><span>MCP 工具调用</span>
+      </div>
+      <a class="go" href="https://test-project-xgh.pages.dev/" target="_blank" rel="noopener">打开在线系统 →</a>
+      <a class="go" href="./wms-docs.html" style="margin-left:18px">看完整技术与设计文档 →</a>
+    </div>
+    <div class="shots">
+      <img src="./img/dashboard.jpg" alt="系统首页仪表盘">
+      <p class="cap">首页仪表盘 · 左侧为 20+ 模块导航，右上角为角色与待办提醒</p>
+      <img src="./img/stock.jpg" alt="库存查询">
+      <p class="cap">库存查询 · 支持按仓库/商品过滤，每行可展开全链路批次溯源</p>
+      <img src="./img/qrcode.jpg" alt="二维码快速出入库">
+      <p class="cap">二维码快速出入库 · 全局配置可逐字段锁定，锁定的字段手机端扫码后不可修改</p>
+    </div>
+  </div>
+
+  <!-- 2. ai-mbti -->
+  <div class="card">
+    <div class="card-top">
+      <h3>AI 创业者 MBTI · 在线测评站</h3>
+      <span class="badge on">已上线运营</span>
+    </div>
+    <p class="solves">
+      <strong>解决的问题：</strong>面向 AI 从业者和创业者的人格测评——回答 40 道二选一题目，得到一个四字母人格代码和对应的中文身份。产品定义、文案定稿、上线部署由我负责，全站文案由 AI 生成、我定验收标准。
+    </p>
+    <ul>
+      <li>40 题题库 + 随机抽题 + 场景多样性约束 + A/B 随机化</li>
+      <li>评分引擎：四字母、倾向值、第二人格、搭子、宿敌、标签</li>
+      <li>Canvas 合成分享图（内嵌二维码），可直接转发</li>
+      <li>后端：结果提交含 24 小时去重与 IP 限流、设备指纹绑定、匿名后台看板</li>
+    </ul>
+    <div class="tags">
+      <span>React 19</span><span>Vite</span><span>Tailwind v4</span>
+      <span>Cloudflare Pages</span><span>Pages Functions</span><span>Cloudflare D1</span>
+    </div>
+    <a class="go" href="https://ai-mbti.xyz/" target="_blank" rel="noopener">打开在线产品 →</a>
+  </div>
+
+  <!-- 3. Abaqus MCP -->
+  <div class="card">
+    <div class="card-top">
+      <h3>Abaqus MCP Server</h3>
+      <span class="badge">让 Agent 操作工程软件</span>
+    </div>
+    <p class="solves">
+      <strong>解决的问题：</strong>有限元仿真工程师大量时间花在重复建模、提交作业、读取结果上——这些操作本该能用一句话描述清楚。
+    </p>
+    <ul>
+      <li>用 Python 实现 MCP 协议服务端，把建模、提交求解、读取结果封装成 Agent 可调用的工具集</li>
+      <li>配了可复现的悬臂梁算例（含 .inp / .odb / .dat 成套文件），每一步可复现、可验证</li>
+      <li>另有一个 Control 版本，工程化更规范（pyproject + uv.lock + headless backend）</li>
+    </ul>
+    <div class="tags"><span>Python</span><span>MCP 协议</span><span>Abaqus / CAE</span><span>Tool Use</span></div>
+  </div>
+
+  <!-- 4. 导师.skill -->
+  <div class="card">
+    <div class="card-top">
+      <h3>导师.skill · 把导师蒸馏成随时可提问的 Agent Skill</h3>
+      <span class="badge">MIT 开源</span>
+    </div>
+    <p class="solves">
+      <strong>解决的问题：</strong>学生想问导师问题但导师没空；导师每年又要把同一套研究理念重复讲很多遍。
+    </p>
+    <ul>
+      <li>把导师的论文、邮件、组会发言结构化蒸馏成一份 Agent Skill</li>
+      <li>兼容 AgentSkills 生态，中英文双语文档齐备</li>
+      <li>包含 arXiv 检索、论文分析、风格分析等工具链</li>
+    </ul>
+    <div class="tags"><span>Node.js</span><span>AgentSkills</span><span>Prompt 工程</span><span>arXiv</span></div>
+  </div>
+
+  <!-- 5. TestCaseForge -->
+  <div class="card">
+    <div class="card-top">
+      <h3>TestCaseForge · 测试用例工坊</h3>
+      <span class="badge">游戏方向</span>
+    </div>
+    <p class="solves">
+      <strong>解决的问题：</strong>做游戏测试实习时我发现策划案改得比用例写得快，于是自己做了这个工具——把策划案 PDF 或 Word 拖进去，一键生成符合团队《测试用例风格规范》的 Excel。
+    </p>
+    <ul>
+      <li>PySide6 桌面程序，打包成 exe 直接给同事用</li>
+      <li>支持加载自定义风格规范文件，生成的用例严格遵循格式</li>
+      <li>覆盖 Rummy GO 召唤系统、锦标赛高倍场活动等模块的用例设计</li>
+    </ul>
+    <div class="tags"><span>Python</span><span>PySide6</span><span>Claude API</span><span>pdfplumber</span><span>openpyxl</span></div>
+  </div>
+
+  <!-- 6. 看板 → 飞书日报 -->
+  <div class="card">
+    <div class="card-top">
+      <h3>看板变动 → 飞书日报自动化 Agent</h3>
+    </div>
+    <p class="solves">
+      <strong>解决的问题：</strong>项目看板每天在变，但没人愿意每天手写日报。
+    </p>
+    <ul>
+      <li>Node + Playwright 抓取看板变动，交给模型归纳成日报并自动写入飞书文档</li>
+      <li>支持早 / 中 / 晚三种模式，异常变动可被捕获</li>
+      <li>结果：日报从「每天 20 分钟手工活」变成零人工</li>
+    </ul>
+    <div class="tags"><span>Node.js</span><span>Playwright</span><span>飞书开放接口</span><span>工作流自动化</span></div>
+  </div>
+
+  <!-- 7. DSH 插件 -->
+  <div class="card">
+    <div class="card-top">
+      <h3>DeepSeek Harness 插件</h3>
+    </div>
+    <p class="solves">
+      <strong>解决的问题：</strong>情报搜集需要每天定时做，但人不一定在电脑前。
+    </p>
+    <ul>
+      <li>用 TypeScript + cordis 写插件，定时巡检后唤起 headless Agent 执行「搜集 → 筛选 → 推送 → 存档」全流程</li>
+      <li>另有界面换肤类插件，插件形态可直接分发</li>
+    </ul>
+    <div class="tags"><span>TypeScript</span><span>cordis</span><span>插件架构</span><span>Agent 编排</span></div>
+  </div>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    郭相麟 · 作品集 &nbsp;|&nbsp; 在线系统：<a href="https://test-project-xgh.pages.dev/" target="_blank" rel="noopener">test-project-xgh.pages.dev</a>
+  </div>
+</footer>
+
+</body>
+</html>
