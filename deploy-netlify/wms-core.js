@@ -675,15 +675,7 @@ function viewNotesById(recordId,type){
     h+='<tr><td style="word-break:break-all">'+n.text+'</td><td>'+(n.userName||n.userId||'-')+'</td><td>'+fdt(n.time||'')+'</td></tr>';
   });
   h+='</tbody></table>';
-  modal('📝 备注记录',h,'<button class="btn btn-o" onclick="clsModal();showTodoModal()">关闭</button>');
-  // 让右上角的叉点击后也回到待办事件
-  setTimeout(function(){
-    var ov=document.getElementById('modalOverlay');
-    if(ov){
-      var closeBtn=ov.querySelector('.modal-close');
-      if(closeBtn)closeBtn.setAttribute('onclick','clsModal();showTodoModal()');
-    }
-  },50);
+  modal('📝 备注记录',h,'<button class="btn btn-o" onclick="clsModal()">关闭</button>');
 }
 
 // ============ 消息通知系统 ============
@@ -1323,7 +1315,7 @@ function initDB(){
   ];
   // 库存
   db.inventory=[{goodsId:1,warehouseId:1,qty:100,warnQty:20},{goodsId:2,warehouseId:1,qty:50,warnQty:10},{goodsId:3,warehouseId:1,qty:30,warnQty:5}];
-  db.nextIds={goods:4,warehouse:3,supplier:3,customer:3,staff:4,account:5,unit:9,category:5,colorGroup:2,sizeGroup:3,notification:1};
+  db.nextIds={goods:4,warehouse:3,supplier:3,customer:3,staff:4,account:5,unit:9,category:5,colorGroup:2,sizeGroup:3,notification:1}; if(typeof seedDemoData==='function')seedDemoData(db);
   return db;
 }
 
@@ -1341,7 +1333,7 @@ function resetAllData(){
   db.stockFlows=[]; db.auditLogs=[]; db.notifications=[]; db.redDots=[]; db.completedBatches=[];
   db.permissions={};
   // 重置nextIds
-  db.nextIds={goods:4,warehouse:3,supplier:3,customer:3,staff:4,account:5,unit:9,category:5,colorGroup:2,sizeGroup:3,notification:1};
+  db.nextIds={goods:4,warehouse:3,supplier:3,customer:3,staff:4,account:5,unit:9,category:5,colorGroup:2,sizeGroup:3,notification:1}; if(typeof seedDemoData==='function')seedDemoData(db);
   saveD(db);
   nav('dashboard','首页仪表盘');
   toast('✅ 所有业务数据已重置，基础配置保留');

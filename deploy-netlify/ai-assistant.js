@@ -16,7 +16,7 @@
     proxyEndpoint: '/api/chat',
     apiKey: '%%DEEPSEEK_API_KEY%%',
     apiEndpoint: 'https://api.deepseek.com/chat/completions',
-    model: 'deepseek-reasoner',  // DeepSeek R1 推理增强
+    model: 'deepseek-chat',  // DeepSeek R1 推理增强
     maxTokens: 1024,
     temperature: 0.7,
 
@@ -364,6 +364,33 @@
     return Object.keys(result).length > 0 ? result : null;
   }
 
+  // ===== 窗口放大 / 还原 =====
+  // 默认窗口只有 380x520，演示时看不清。点头部 ⛶ 在「原始尺寸」和「接近全屏」之间切换。
+  window.__aiToggleFull = function () {
+    var w = document.getElementById('ai-chat-window');
+    var btn = document.getElementById('ai-fs-btn');
+    if (!w) return;
+    if (w.getAttribute('data-full') === '1') {
+      w.style.width = CONFIG.windowWidth + 'px';
+      w.style.height = CONFIG.windowHeight + 'px';
+      w.style.right = '20px'; w.style.left = 'auto';
+      w.style.bottom = '78px'; w.style.top = 'auto';
+      w.style.borderRadius = '12px';
+      w.setAttribute('data-full', '0');
+      if (btn) btn.textContent = '⛶';
+    } else {
+      w.style.width = Math.min(1180, window.innerWidth - 40) + 'px';
+      w.style.height = (window.innerHeight - 120) + 'px';
+      w.style.left = '20px'; w.style.right = 'auto';
+      w.style.top = '20px'; w.style.bottom = 'auto';
+      w.style.borderRadius = '12px';
+      w.setAttribute('data-full', '1');
+      if (btn) btn.textContent = '⤡';
+    }
+    var box = document.getElementById('ai-chat-messages');
+    if (box) box.scrollTop = box.scrollHeight;
+  };
+
   // ===== DeepSeek API 调用 =====
   function callDeepSeek(messages, callback) {
     // 两条路径：
@@ -386,7 +413,7 @@
       xhr.open('POST', CONFIG.useProxy ? CONFIG.proxyEndpoint : CONFIG.apiEndpoint, true);
       xhr.setRequestHeader('Content-Type', 'application/json');
       if (!CONFIG.useProxy) xhr.setRequestHeader('Authorization', 'Bearer ' + CONFIG.apiKey);
-      xhr.timeout = 30000;
+      xhr.timeout = 60000;
 
       xhr.onload = function() {
         // 代理未部署 / 未配环境变量：安静降级，不弹错误给用户看
@@ -981,6 +1008,7 @@
       '<div style="display:flex;gap:8px;align-items:center">' +
       '<span style="font-size:10px;opacity:.8;cursor:pointer;padding:2px 8px;background:rgba(255,255,255,.2);border-radius:10px" ' +
       'onclick="document.querySelector(\'#ai-chat-mode-indicator\').style.display=\'flex\'">切换搜索模式</span>' +
+      '<span id="ai-fs-btn" title="放大 / 还原" style="cursor:pointer;font-size:13px;line-height:1;padding:3px 7px;background:rgba(255,255,255,.2);border-radius:6px" onclick="window.__aiToggleFull()">⛶</span>' +
       '<span style="cursor:pointer;font-size:18px;line-height:1" onclick="document.getElementById(\'ai-chat-window\').style.display=\'none\'">×</span>' +
       '</div></div>' +
 
