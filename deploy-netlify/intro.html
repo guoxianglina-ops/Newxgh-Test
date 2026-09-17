@@ -82,18 +82,10 @@ img{display:block;max-width:100%}
 .btn-main{
   display:inline-flex;align-items:center;gap:8px;
   background:var(--grad);color:#000;font-size:16px;
-  padding:18px 48px;border-radius:12px;
+  padding:18px 32px;border-radius:12px;
   transition:transform .3s ease,box-shadow .3s ease;
 }
 .btn-main:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(0,202,224,.35)}
-.btn-ghost{
-  display:inline-flex;align-items:center;gap:8px;
-  padding:18px 32px;border-radius:12px;font-size:16px;color:#fff;
-  background:hsla(0,0%,100%,.08);border:.5px solid var(--line-2);
-  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
-  transition:background .3s ease;
-}
-.btn-ghost:hover{background:hsla(0,0%,100%,.16)}
 
 /* ---------- 引言 ---------- */
 .intro{padding:0 0 100px}
@@ -260,7 +252,7 @@ img{display:block;max-width:100%}
   .inner{padding:24px 20px}
   .shots{padding:16px 20px 24px}
   .shots.cols-3,.shots.cols-2{grid-template-columns:1fr}
-  .btn-main,.btn-ghost{padding:16px 24px;font-size:15px}
+  .btn-main{padding:16px 24px;font-size:15px}
 }
 </style>
 </head>
@@ -282,12 +274,12 @@ img{display:block;max-width:100%}
       <h1 class="hero-title">郭相麟</h1>
       <p class="hero-sub">
         独立做过完整的业务系统，也做过让 Agent 去操作软件的工具。<br>
-        关注方向：Agent 如何真正落到业务里，以及 AI 与工程软件、硬件之间的那层接口。
+        关注方向：AI能帮我们搓什么有意思的小软件、AI能如何帮助我们提效、Agent如何融入日常学习与工作。
       </p>
       <div class="hero-actions">
-        <a class="btn-ghost" href="https://ai-mbti.xyz/" target="_blank" rel="noopener">在线产品 · AI 创业者 MBTI</a>
-        <a class="btn-ghost" href="https://test-project-xgh.pages.dev/" target="_blank" rel="noopener">在线 Demo · 仓储管理系统</a>
-        <a class="btn-ghost" href="https://github.com/guoxianglina-ops/Newxgh-Test" target="_blank" rel="noopener">GitHub · 源码</a>
+        <a class="btn-main" href="https://ai-mbti.xyz/" target="_blank" rel="noopener">在线产品 · AI 创业者 MBTI</a>
+        <a class="btn-main" href="https://test-project-xgh.pages.dev/" target="_blank" rel="noopener">在线 Demo · 仓储管理系统</a>
+        <a class="btn-main" href="https://github.com/guoxianglina-ops/Newxgh-Test" target="_blank" rel="noopener">GitHub · 源码</a>
       </div>
     </div>
   </div>
