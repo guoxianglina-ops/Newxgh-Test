@@ -7,8 +7,14 @@
 
   // ===== 配置 =====
   var CONFIG = {
-    // DeepSeek API 配置（面试演示：替换为你的 API Key）
-    apiKey: '%%DEEPSEEK_API_KEY%%',  // DeepSeek API Key
+    // 默认走同源代理 /api/chat（Cloudflare Pages Functions）。
+    // API Key 保存在 Cloudflare 的环境变量 DEEPSEEK_API_KEY 里，只存在于服务端，
+    // 永远不会下发到浏览器，也不会出现在仓库里。
+    // 只有在本地直连调试时才把 useProxy 改成 false 并临时填 apiKey——
+    // 切记不要把真实 Key 提交到仓库。
+    useProxy: true,
+    proxyEndpoint: '/api/chat',
+    apiKey: '%%DEEPSEEK_API_KEY%%',
     apiEndpoint: 'https://api.deepseek.com/chat/completions',
     model: 'deepseek-reasoner',  // DeepSeek R1 推理增强
     maxTokens: 1024,
@@ -360,36 +366,45 @@
 
   // ===== DeepSeek API 调用 =====
   function callDeepSeek(messages, callback) {
-    // 没有配置 API Key 时，走本地检索降级（不调用大模型）。
-    // 注意：这里必须用 err 触发降级分支。早先传的是 callback(null, null)，
-    // 会被当成「成功但内容为空」，紧接着 _extractAction(null) 抛 TypeError，
-    // 表现就是发消息后毫无反应——客服 Agent 看起来像坏了。
-    if (CONFIG.apiKey === '%%DEEPSEEK_API_KEY%%' || !CONFIG.apiKey) {
+    // 两条路径：
+    //   A. useProxy = true（线上默认）：POST /api/chat，由服务端注入 Key，前端不带任何密钥
+    //   B. useProxy = false：直连 DeepSeek，需要自己填 apiKey（仅本地调试用）
+    // 任何一条走不通都安静退回本地知识库检索，不会再出现「发消息没反应」。
+    var hasKey = CONFIG.apiKey && CONFIG.apiKey !== '%%DEEPSEEK_API_KEY%%';
+    if (!CONFIG.useProxy && !hasKey) {
       callback('__LOCAL_ONLY__', null);
       return;
     }
 
+    function degrade(reason) {
+      console.warn('[AI] 大模型不可用，退回本地检索：' + reason);
+      callback('__LOCAL_ONLY__', null);
+    }
+
     try {
       var xhr = new XMLHttpRequest();
-      xhr.open('POST', CONFIG.apiEndpoint, true);
+      xhr.open('POST', CONFIG.useProxy ? CONFIG.proxyEndpoint : CONFIG.apiEndpoint, true);
       xhr.setRequestHeader('Content-Type', 'application/json');
-      xhr.setRequestHeader('Authorization', 'Bearer ' + CONFIG.apiKey);
+      if (!CONFIG.useProxy) xhr.setRequestHeader('Authorization', 'Bearer ' + CONFIG.apiKey);
       xhr.timeout = 30000;
 
       xhr.onload = function() {
-        if (xhr.status === 200) {
-          try {
-            var resp = JSON.parse(xhr.responseText);
-            var answer = resp.choices && resp.choices[0] && resp.choices[0].message ?
-              resp.choices[0].message.content : '[API返回格式异常]';
-            callback(null, answer);
-          } catch(e) { callback('解析响应失败: ' + e.message); }
-        } else {
+        // 代理未部署 / 未配环境变量：安静降级，不弹错误给用户看
+        if (xhr.status === 503 || xhr.status === 404 || xhr.status === 405) { degrade('HTTP ' + xhr.status); return; }
+        if (xhr.status !== 200) {
           callback('API 错误 (' + xhr.status + '): ' + (xhr.responseText || '').substring(0, 200));
+          return;
         }
+        var resp = null;
+        try { resp = JSON.parse(xhr.responseText); } catch (e) { resp = null; }
+        if (!resp || !resp.choices || !resp.choices[0] || !resp.choices[0].message) {
+          degrade('响应不是预期的 JSON');
+          return;
+        }
+        callback(null, resp.choices[0].message.content);
       };
-      xhr.onerror = function() { callback('网络错误，无法连接 DeepSeek API'); };
-      xhr.ontimeout = function() { callback('API 请求超时'); };
+      xhr.onerror = function() { degrade('网络错误'); };
+      xhr.ontimeout = function() { degrade('请求超时'); };
 
       xhr.send(JSON.stringify({
         model: CONFIG.model,
@@ -399,7 +414,7 @@
         stream: false
       }));
     } catch(e) {
-      callback('调用失败: ' + e.message);
+      degrade('调用失败: ' + e.message);
     }
   }
 
