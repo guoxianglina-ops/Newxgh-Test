@@ -172,20 +172,30 @@
   </div>
 
   <!-- 3. Abaqus MCP -->
-  <div class="card">
-    <div class="card-top">
-      <h3>Abaqus MCP Server</h3>
-      <span class="badge">让 Agent 操作工程软件</span>
+  <div class="card feature">
+   <div class="inner">
+      <div class="card-top">
+        <h3>Abaqus MCP Server</h3>
+        <span class="badge">让 Agent 操作工程软件</span>
+      </div>
+      <p class="solves">
+        <strong>解决的问题：</strong>有限元仿真工程师大量时间花在重复建模、提交作业、读取结果上——这些操作本该能用一句话描述清楚。
+      </p>
+      <ul>
+        <li>用 Python 实现 MCP 协议服务端，把建模、提交求解、读取结果封装成 Agent 可调用的工具集</li>
+        <li>配了可复现的悬臂梁算例（含 .inp / .odb / .dat 成套文件），每一步可复现、可验证</li>
+        <li>另有一个 Control 版本，工程化更规范（pyproject + uv.lock + headless backend）</li>
+      </ul>
+      <div class="tags"><span>Python</span><span>MCP 协议</span><span>Abaqus / CAE</span><span>Tool Use</span></div>
+   </div>
+   <div class="shots">
+    <div class="row3">
+      <div><img src="./img/abaqus-mesh.jpg" alt="模型网格"><p class="cap">模型网格 · 洞口周边做了局部加密</p></div>
+      <div><img src="./img/abaqus-mises.jpg" alt="Mises 应力云图"><p class="cap">Mises 应力云图 · 洞口附近应力集中</p></div>
     </div>
-    <p class="solves">
-      <strong>解决的问题：</strong>有限元仿真工程师大量时间花在重复建模、提交作业、读取结果上——这些操作本该能用一句话描述清楚。
-    </p>
-    <ul>
-      <li>用 Python 实现 MCP 协议服务端，把建模、提交求解、读取结果封装成 Agent 可调用的工具集</li>
-      <li>配了可复现的悬臂梁算例（含 .inp / .odb / .dat 成套文件），每一步可复现、可验证</li>
-      <li>另有一个 Control 版本，工程化更规范（pyproject + uv.lock + headless backend）</li>
-    </ul>
-    <div class="tags"><span>Python</span><span>MCP 协议</span><span>Abaqus / CAE</span><span>Tool Use</span></div>
+    <img src="./img/abaqus-agent.jpg" alt="与 Agent 协作做参数化研究">
+    <p class="cap">与 Agent 协作做参数化研究 · 左侧工程目录、中间 24 组参数工况表、右侧逐条核对计算结果</p>
+   </div>
   </div>
 
   <!-- 4. TestCaseForge -->
