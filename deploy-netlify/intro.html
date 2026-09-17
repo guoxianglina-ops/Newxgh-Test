@@ -17,7 +17,6 @@
   .hero{background:linear-gradient(135deg,#001529 0%,#003a8c 60%,#096dd9 100%);color:#fff;padding:64px 0 56px}
   .hero h1{font-size:34px;font-weight:600;letter-spacing:.5px;margin-bottom:10px}
   .hero .sub{font-size:15px;color:rgba(255,255,255,.78);line-height:1.9;max-width:680px}
-  .hero .track{display:inline-block;margin-top:16px;padding:4px 14px;border-radius:20px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.24);font-size:13px}
   .links{margin-top:26px;display:flex;flex-wrap:wrap;gap:10px}
   .links a{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;border-radius:8px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.22);color:#fff;text-decoration:none;font-size:14px;transition:.2s}
   .links a:hover{background:rgba(255,255,255,.22)}
@@ -27,6 +26,7 @@
   /* 正文 */
   main{padding:44px 0 72px}
   .lead{font-size:15px;color:var(--tx2);line-height:2.1;margin-bottom:44px;padding-left:18px;border-left:3px solid var(--pri)}
+  .lead strong{color:var(--tx)}
   .sec-title{font-size:20px;font-weight:600;margin:0 0 6px}
   .sec-desc{font-size:14px;color:var(--tx3);margin-bottom:22px}
 
@@ -74,11 +74,9 @@
   <div class="wrap">
     <h1>郭相麟</h1>
     <p class="sub">独立做过完整的业务系统，也做过让 Agent 去操作软件的工具。<br>关注方向：Agent 如何真正落到业务里，以及 AI 与工程软件、硬件之间的那层接口。</p>
-    <span class="track">2026「进化酒馆」Agent 黑客松 · 深圳站 · 报名赛道 03 原生 Agent</span>
     <div class="links">
       <a class="pri" href="https://test-project-xgh.pages.dev/" target="_blank" rel="noopener">在线系统 · 象过河 WMS</a>
       <a href="https://ai-mbti.xyz/" target="_blank" rel="noopener">在线产品 · AI 创业者 MBTI</a>
-      <a href="./wms-docs.html">仓储系统详细文档</a>
     </div>
   </div>
 </header>
@@ -86,14 +84,14 @@
 <main class="wrap">
 
   <p class="lead">
-    我做的项目基本围绕同一件事：<strong>把那些原本只能靠人点、靠人手算的流程，交给一个能被验证的系统或 Agent 去做。</strong>
-    下面是七个项目的说明，前两个可以直接在线打开。
+    我做的项目基本围绕同一件事：<strong>把那些原本只能靠人点、靠人手算的流程，交给一个能被验证的系统或 Agent 去做。</strong><br>
+    开发方式是人机协作——我定义产品、定验收标准、判断每一版够不够用，AI 完成编码，我再逐版验证结果是否达标。下面六个项目都是这样与 AI 合作完成的。
   </p>
 
-  <!-- 1. 象过河 WMS -->
   <h2 class="sec-title">项目</h2>
-  <p class="sec-desc">按与「原生 Agent」赛道的相关度排序</p>
+  <p class="sec-desc">按与 Agent 方向的相关度排序</p>
 
+  <!-- 1. 象过河 WMS -->
   <div class="card feature">
     <div class="inner">
       <div class="card-top">
@@ -110,20 +108,20 @@
         <li><strong>容错设计</strong>：没有 API Key 时自动降级为纯本地检索，系统不会瘫</li>
         <li><strong>数据层</strong>：PostgreSQL JSONB 单表存储，前端做乐观锁并发控制与 ID 预分配池；断网自动降级到本地存储</li>
         <li><strong>业务深度</strong>：全链路批次溯源、FIFO 批次消耗、三级角色与审核状态机、库存预警与跨仓调拨</li>
-        <li><strong>可验证</strong>：为 AI 助手写了 30 条测试用例分 6 大类，其中专门有一类「不需要 AI 的用例」，用来界定哪些操作不该交给模型</li>
+        <li><strong>可验证</strong>：为 AI 助手设计了 30 条测试用例、分 6 大类，其中专门有一类「不需要 AI 的用例」，用来界定哪些操作不该交给模型</li>
+        <li><strong>我的角色</strong>：产品定义、模块与流程设计、每一版的验收标准，以及 70 多个版本的迭代判断——编码由 AI 协作完成</li>
       </ul>
       <div class="stats">
-        <div><b>约 4,700</b><i>行手写前端 JS</i></div>
+        <div><b>约 4,700</b><i>行前端代码（与 AI 协作）</i></div>
         <div><b>20+</b><i>业务模块</i></div>
         <div><b>70+</b><i>版本迭代</i></div>
-        <div><b>约 2 个月</b><i>独立开发</i></div>
+        <div><b>约 2 个月</b><i>与 AI 协作开发</i></div>
       </div>
       <div class="tags">
         <span>原生 JS SPA</span><span>REST API</span><span>PostgreSQL / JSONB</span>
         <span>Supabase</span><span>DeepSeek</span><span>RAG</span><span>MCP 工具调用</span>
       </div>
       <a class="go" href="https://test-project-xgh.pages.dev/" target="_blank" rel="noopener">打开在线系统 →</a>
-      <a class="go" href="./wms-docs.html" style="margin-left:18px">看完整技术与设计文档 →</a>
     </div>
     <div class="shots">
       <img src="./img/dashboard.jpg" alt="系统首页仪表盘">
@@ -142,13 +140,14 @@
       <span class="badge on">已上线运营</span>
     </div>
     <p class="solves">
-      <strong>解决的问题：</strong>面向 AI 从业者和创业者的人格测评——回答 40 道二选一题目，得到一个四字母人格代码和对应的中文身份。产品定义、文案定稿、上线部署由我负责，全站文案由 AI 生成、我定验收标准。
+      <strong>解决的问题：</strong>面向 AI 从业者和创业者的人格测评——回答 40 道二选一题目，得到一个四字母人格代码和对应的中文身份。
     </p>
     <ul>
       <li>40 题题库 + 随机抽题 + 场景多样性约束 + A/B 随机化</li>
       <li>评分引擎：四字母、倾向值、第二人格、搭子、宿敌、标签</li>
       <li>Canvas 合成分享图（内嵌二维码），可直接转发</li>
       <li>后端：结果提交含 24 小时去重与 IP 限流、设备指纹绑定、匿名后台看板</li>
+      <li><strong>我的角色</strong>：产品定义、文案验收标准与上线，全站文案由 AI 生成、我逐条定稿，代码与 AI 合作完成</li>
     </ul>
     <div class="tags">
       <span>React 19</span><span>Vite</span><span>Tailwind v4</span>
@@ -174,69 +173,56 @@
     <div class="tags"><span>Python</span><span>MCP 协议</span><span>Abaqus / CAE</span><span>Tool Use</span></div>
   </div>
 
-  <!-- 4. 导师.skill -->
-  <div class="card">
-    <div class="card-top">
-      <h3>导师.skill · 把导师蒸馏成随时可提问的 Agent Skill</h3>
-      <span class="badge">MIT 开源</span>
-    </div>
-    <p class="solves">
-      <strong>解决的问题：</strong>学生想问导师问题但导师没空；导师每年又要把同一套研究理念重复讲很多遍。
-    </p>
-    <ul>
-      <li>把导师的论文、邮件、组会发言结构化蒸馏成一份 Agent Skill</li>
-      <li>兼容 AgentSkills 生态，中英文双语文档齐备</li>
-      <li>包含 arXiv 检索、论文分析、风格分析等工具链</li>
-    </ul>
-    <div class="tags"><span>Node.js</span><span>AgentSkills</span><span>Prompt 工程</span><span>arXiv</span></div>
-  </div>
-
-  <!-- 5. TestCaseForge -->
+  <!-- 4. TestCaseForge -->
   <div class="card">
     <div class="card-top">
       <h3>TestCaseForge · 测试用例工坊</h3>
       <span class="badge">游戏方向</span>
     </div>
     <p class="solves">
-      <strong>解决的问题：</strong>做游戏测试实习时我发现策划案改得比用例写得快，于是自己做了这个工具——把策划案 PDF 或 Word 拖进去，一键生成符合团队《测试用例风格规范》的 Excel。
+      <strong>解决的问题：</strong>做游戏测试实习时我发现策划案改得比用例写得快，于是做了这个工具——把策划案 PDF 或 Word 拖进去，一键生成符合团队《测试用例风格规范》的 Excel。
     </p>
     <ul>
       <li>PySide6 桌面程序，打包成 exe 直接给同事用</li>
       <li>支持加载自定义风格规范文件，生成的用例严格遵循格式</li>
       <li>覆盖 Rummy GO 召唤系统、锦标赛高倍场活动等模块的用例设计</li>
+      <li><strong>我的角色</strong>：从真实工作痛点出发定义工具、定输出格式规范，AI 辅助完成开发</li>
     </ul>
     <div class="tags"><span>Python</span><span>PySide6</span><span>Claude API</span><span>pdfplumber</span><span>openpyxl</span></div>
   </div>
 
-  <!-- 6. 看板 → 飞书日报 -->
+  <!-- 5. 看板 → 飞书日报 -->
   <div class="card">
     <div class="card-top">
       <h3>看板变动 → 飞书日报自动化 Agent</h3>
     </div>
     <p class="solves">
-      <strong>解决的问题：</strong>项目看板每天在变，但没人愿意每天手写日报。
+      <strong>解决的问题：</strong>项目看板每天在变，但没人愿意每天手动整理日报。
     </p>
     <ul>
       <li>Node + Playwright 抓取看板变动，交给模型归纳成日报并自动写入飞书文档</li>
       <li>支持早 / 中 / 晚三种模式，异常变动可被捕获</li>
-      <li>结果：日报从「每天 20 分钟手工活」变成零人工</li>
+      <li>结果：日报从「每天 20 分钟的重复劳动」变成零人工</li>
     </ul>
     <div class="tags"><span>Node.js</span><span>Playwright</span><span>飞书开放接口</span><span>工作流自动化</span></div>
   </div>
 
-  <!-- 7. DSH 插件 -->
+  <!-- 6. AI 新闻推送与迭代筛选 -->
   <div class="card">
     <div class="card-top">
-      <h3>DeepSeek Harness 插件</h3>
+      <h3>AI 新闻推送与迭代筛选</h3>
+      <span class="badge">日常在跑</span>
     </div>
     <p class="solves">
-      <strong>解决的问题：</strong>情报搜集需要每天定时做，但人不一定在电脑前。
+      <strong>解决的问题：</strong>AI 领域每天信息量太大，手动刷既费时间又容易漏掉重点；更麻烦的是兴趣点会变，固定的推荐流会越刷越不准。
     </p>
     <ul>
-      <li>用 TypeScript + cordis 写插件，定时巡检后唤起 headless Agent 执行「搜集 → 筛选 → 推送 → 存档」全流程</li>
-      <li>另有界面换肤类插件，插件形态可直接分发</li>
+      <li>维护一份新闻源清单，每天定时抓取多源内容</li>
+      <li>用一份「口味档案」定义筛什么、不筛什么，由模型筛选并汇总成中文简报</li>
+      <li>自动推送并归档，形成可回溯的推送台账</li>
+      <li><strong>迭代筛选</strong>：口味档案本身按推送后的反馈持续修改——筛得不准就改标准，下一轮结果跟着变</li>
     </ul>
-    <div class="tags"><span>TypeScript</span><span>cordis</span><span>插件架构</span><span>Agent 编排</span></div>
+    <div class="tags"><span>定时任务</span><span>内容筛选</span><span>工作流自动化</span><span>Prompt 工程</span></div>
   </div>
 
 </main>
