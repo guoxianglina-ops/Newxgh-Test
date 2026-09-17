@@ -360,9 +360,12 @@
 
   // ===== DeepSeek API 调用 =====
   function callDeepSeek(messages, callback) {
-    // 如果没有 API Key，返回空（触发降级模式）
+    // 没有配置 API Key 时，走本地检索降级（不调用大模型）。
+    // 注意：这里必须用 err 触发降级分支。早先传的是 callback(null, null)，
+    // 会被当成「成功但内容为空」，紧接着 _extractAction(null) 抛 TypeError，
+    // 表现就是发消息后毫无反应——客服 Agent 看起来像坏了。
     if (CONFIG.apiKey === '%%DEEPSEEK_API_KEY%%' || !CONFIG.apiKey) {
-      callback(null, null);
+      callback('__LOCAL_ONLY__', null);
       return;
     }
 
@@ -1088,7 +1091,12 @@
 
       if (err) {
         // API 不可用时的降级方案
-        _aiAddMsg('assistant', '⚠️ ' + err + '\n\n以下为本地检索结果：\n\n' + context);
+        if (err === '__LOCAL_ONLY__') {
+          var _local = context || '本地知识库没有检索到相关内容，换个说法再试试。';
+          _aiAddMsg('assistant', _local + '\n\n---\n<span style="font-size:10px;color:#999">📎 来自本地知识库检索</span>');
+        } else {
+          _aiAddMsg('assistant', '⚠️ ' + err + '\n\n以下为本地检索结果：\n\n' + context);
+        }
       } else {
         // 尝试从回复末尾提取操作指令
         var action = _extractAction(answer);
