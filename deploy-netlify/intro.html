@@ -50,6 +50,9 @@
   .shots img{width:100%;border:1px solid var(--bd);border-radius:8px;display:block;margin-bottom:12px;box-shadow:0 2px 10px rgba(16,24,40,.07)}
   .shots img:last-child{margin-bottom:0}
   .shots .cap{font-size:12px;color:var(--tx3);margin:-6px 0 14px 2px}
+  .shots .row3{display:flex;gap:14px}
+  .shots .row3 > div{flex:1;min-width:0}
+  .shots .row3 img{margin-bottom:8px}
   .inner{padding:26px 28px 22px}
 
   /* 数据条 */
@@ -135,7 +138,8 @@
   </div>
 
   <!-- 2. ai-mbti -->
-  <div class="card">
+  <div class="card feature">
+   <div class="inner">
     <div class="card-top">
       <h3>AI 创业者 MBTI · 在线测评站</h3>
       <span class="badge on">已上线运营</span>
@@ -155,6 +159,16 @@
       <span>Cloudflare Pages</span><span>Pages Functions</span><span>Cloudflare D1</span>
     </div>
     <a class="go" href="https://ai-mbti.xyz/" target="_blank" rel="noopener">打开在线产品 →</a>
+   </div>
+   <div class="shots">
+    <div class="row3">
+      <div><img src="./img/mbti-home.jpg" alt="AI 创业者 MBTI 首页"><p class="cap">首页</p></div>
+      <div><img src="./img/mbti-test.jpg" alt="答题页"><p class="cap">40 道二选一</p></div>
+      <div><img src="./img/mbti-result.jpg" alt="结果页"><p class="cap">结果：人格代码 + 判词 + 同派创业者</p></div>
+    </div>
+    <img src="./img/mbti-admin.jpg" alt="管理后台">
+    <p class="cap">管理后台 · 总测试数、计入统计、今日/昨日新增、人格分布与测试记录</p>
+   </div>
   </div>
 
   <!-- 3. Abaqus MCP -->

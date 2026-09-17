@@ -902,7 +902,7 @@
       '```json\n{"action":"<动作>","data":{...}}\n```\n\n' +
       '## 支持的动作\n\n' +
       '1. **create_order** — 用户要求创建订单\n' +
-      '   data: {"orderType":"purchaseOrder"|"salesOrder", "fields":{"supplierName/customerName":"xx", "items":[{"goodsName":"商品名","qty":数量,"price":单价}], "date":"2026-07-30", "note":""}, "complete":true|false, "message":"给用户看的摘要..."}\n' +
+      '   data: {"orderType":"purchaseOrder"|"salesOrder", "fields":{"supplierName/customerName":"xx", "items":[{"goodsName":"商品名","qty":数量,"price":单价}], "date":"' + _nowStr() + '", "note":""}, "complete":true|false, "message":"给用户看的摘要..."}\n' +
       '   - complete=true: 所有必填字段已收集完毕（至少：供应商/客户 + 至少1个明确商品 + 数量≥0）\n' +
       '   - complete=false: 还有缺失字段，同时用 ask_missing 追问\n\n' +
       '2. **ask_missing** — 字段不全，追问用户\n' +
@@ -912,7 +912,7 @@
       '## 必填字段\n' +
       '- purchaseOrder: supplierName(供应商名称), items(每项含goodsName商品名/qty数量/price单价)\n' +
       '- salesOrder: customerName(客户名称), items(每项含goodsName商品名/qty数量/price单价)\n' +
-      '- date 默认今天，note 可选\n\n' +
+      '- date 默认今天（今天就是 ' + _nowStr() + '），note 可选\n\n' +
       '## 主动提议\n' +
       '当你回答问题后发现：库存低于预警线 → 可提议"需要我帮你创建补货采购订单吗？"→附 create_order 指令\n' +
       '提议以问句结尾，给用户拒绝的余地。\n\n' +
