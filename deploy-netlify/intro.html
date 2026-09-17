@@ -78,8 +78,8 @@
     <h1>郭相麟</h1>
     <p class="sub">独立做过完整的业务系统，也做过让 Agent 去操作软件的工具。<br>关注方向：Agent 如何真正落到业务里，以及 AI 与工程软件、硬件之间的那层接口。</p>
     <div class="links">
-      <a class="pri" href="https://test-project-xgh.pages.dev/" target="_blank" rel="noopener">在线系统 · 象过河 WMS</a>
-      <a href="https://ai-mbti.xyz/" target="_blank" rel="noopener">在线产品 · AI 创业者 MBTI</a>
+      <a class="pri" href="https://ai-mbti.xyz/" target="_blank" rel="noopener">在线产品 · AI 创业者 MBTI</a>
+      <a href="https://test-project-xgh.pages.dev/" target="_blank" rel="noopener">在线 Demo · 仓储管理系统</a>
       <a href="https://github.com/guoxianglina-ops/Newxgh-Test" target="_blank" rel="noopener">GitHub · 源码</a>
     </div>
   </div>
@@ -89,55 +89,14 @@
 
   <p class="lead">
     我做的项目基本围绕同一件事：<strong>把那些原本只能靠人点、靠人手算的流程，交给一个能被验证的系统或 Agent 去做。</strong><br>
+    AI 创业者 MBTI 是其中唯一一个直接面向普通用户、真正上线在跑的产品，所以放在最前面。<br>
     开发方式是人机协作——我定义产品、定验收标准、判断每一版够不够用，AI 完成编码，我再逐版验证结果是否达标。下面六个项目都是这样与 AI 合作完成的。
   </p>
 
   <h2 class="sec-title">项目</h2>
-  <p class="sec-desc">按与 Agent 方向的相关度排序</p>
+  <p class="sec-desc">已上线运营的排在最前，其余按完成度排列</p>
 
-  <!-- 1. 象过河 WMS -->
-  <div class="card feature">
-    <div class="inner">
-      <div class="card-top">
-        <h3>象过河仓库管理系统（内置 AI 助手）</h3>
-        <span class="badge on">已上线</span>
-        <span class="badge">主力项目</span>
-      </div>
-      <p class="solves">
-        <strong>解决的问题：</strong>中小仓库普遍用纸质单或 Excel 管库存，员工必须走到电脑前手动录入；电脑端和手机端数据不互通；出了质量问题追溯不到具体批次；制单人、审核人、主管之间没有清晰的状态流转。
-        我用一套 Web 端系统覆盖了 20+ 个业务模块，核心是<strong>二维码扫码出入库</strong>——生成二维码、打印贴标、手机扫码自动建单，员工不用回电脑前。
-      </p>
-      <ul>
-        <li><strong>AI 助手（Agent 部分）</strong>：内置操作型 AI，接 DeepSeek，可以不只问答——通过多轮对话直接创建采购单和销售单，带确认卡片、信息补全和主动提议；检索层用 RAG 结合业务实时数据做跨模块分析</li>
-        <li><strong>容错设计</strong>：没有 API Key 时自动降级为纯本地检索，系统不会瘫</li>
-        <li><strong>数据层</strong>：PostgreSQL JSONB 单表存储，前端做乐观锁并发控制与 ID 预分配池；断网自动降级到本地存储</li>
-        <li><strong>业务深度</strong>：全链路批次溯源、FIFO 批次消耗、三级角色与审核状态机、库存预警与跨仓调拨</li>
-        <li><strong>可验证</strong>：为 AI 助手设计了 30 条测试用例、分 6 大类，其中专门有一类「不需要 AI 的用例」，用来界定哪些操作不该交给模型</li>
-        <li><strong>我的角色</strong>：产品定义、模块与流程设计、每一版的验收标准，以及 70 多个版本的迭代判断——编码由 AI 协作完成</li>
-      </ul>
-      <div class="stats">
-        <div><b>约 4,700</b><i>行前端代码（与 AI 协作）</i></div>
-        <div><b>20+</b><i>业务模块</i></div>
-        <div><b>70+</b><i>版本迭代</i></div>
-        <div><b>约 2 个月</b><i>与 AI 协作开发</i></div>
-      </div>
-      <div class="tags">
-        <span>原生 JS SPA</span><span>REST API</span><span>PostgreSQL / JSONB</span>
-        <span>Supabase</span><span>DeepSeek</span><span>RAG</span><span>MCP 工具调用</span>
-      </div>
-      <a class="go" href="https://test-project-xgh.pages.dev/" target="_blank" rel="noopener">打开在线系统 →</a>      <a class="go" href="https://github.com/guoxianglina-ops/Newxgh-Test" target="_blank" rel="noopener" style="margin-left:18px">看源码 →</a>
-    </div>
-    <div class="shots">
-      <img src="./img/dashboard.jpg" alt="系统首页仪表盘">
-      <p class="cap">首页仪表盘 · 左侧为 20+ 模块导航，右上角为角色与待办提醒</p>
-      <img src="./img/stock.jpg" alt="库存查询">
-      <p class="cap">库存查询 · 支持按仓库/商品过滤，每行可展开全链路批次溯源</p>
-      <img src="./img/qrcode.jpg" alt="二维码快速出入库">
-      <p class="cap">二维码快速出入库 · 全局配置可逐字段锁定，锁定的字段手机端扫码后不可修改</p>
-    </div>
-  </div>
-
-  <!-- 2. ai-mbti -->
+  <!-- 1. AI 创业者 MBTI（真正上线，放最前） -->
   <div class="card feature">
    <div class="inner">
     <div class="card-top">
@@ -169,6 +128,47 @@
     <img src="./img/mbti-admin.jpg" alt="管理后台">
     <p class="cap">管理后台 · 总测试数、计入统计、今日/昨日新增、人格分布与测试记录</p>
    </div>
+  </div>
+
+  <!-- 2. 仓储管理系统 -->
+  <div class="card feature">
+    <div class="inner">
+      <div class="card-top">
+        <h3>仓储管理系统（内置 AI 助手）</h3>
+        <span class="badge">在线 Demo</span>
+      </div>
+      <p class="solves">
+        <strong>解决的问题：</strong>中小仓库普遍用纸质单或 Excel 管库存，员工必须走到电脑前手动录入；电脑端和手机端数据不互通；出了质量问题追溯不到具体批次；制单人、审核人、主管之间没有清晰的状态流转。
+        我用一套 Web 端系统覆盖了 20+ 个业务模块，核心是<strong>二维码扫码出入库</strong>——生成二维码、打印贴标、手机扫码自动建单，员工不用回电脑前。
+      </p>
+      <ul>
+        <li><strong>AI 助手（Agent 部分）</strong>：内置操作型 AI，接 DeepSeek，可以不只问答——通过多轮对话直接创建采购单和销售单，带确认卡片、信息补全和主动提议；检索层用 RAG 结合业务实时数据做跨模块分析</li>
+        <li><strong>容错设计</strong>：没有 API Key 时自动降级为纯本地检索，系统不会瘫</li>
+        <li><strong>数据层</strong>：PostgreSQL JSONB 单表存储，前端做乐观锁并发控制与 ID 预分配池；断网自动降级到本地存储</li>
+        <li><strong>业务深度</strong>：全链路批次溯源、FIFO 批次消耗、三级角色与审核状态机、库存预警与跨仓调拨</li>
+        <li><strong>可验证</strong>：为 AI 助手设计了 30 条测试用例、分 6 大类，其中专门有一类「不需要 AI 的用例」，用来界定哪些操作不该交给模型</li>
+        <li><strong>我的角色</strong>：产品定义、模块与流程设计、每一版的验收标准，以及 70 多个版本的迭代判断——编码由 AI 协作完成</li>
+      </ul>
+      <div class="stats">
+        <div><b>约 4,700</b><i>行前端代码（与 AI 协作）</i></div>
+        <div><b>20+</b><i>业务模块</i></div>
+        <div><b>70+</b><i>版本迭代</i></div>
+        <div><b>约 2 个月</b><i>与 AI 协作开发</i></div>
+      </div>
+      <div class="tags">
+        <span>原生 JS SPA</span><span>REST API</span><span>PostgreSQL / JSONB</span>
+        <span>Supabase</span><span>DeepSeek</span><span>RAG</span><span>MCP 工具调用</span>
+      </div>
+      <a class="go" href="https://test-project-xgh.pages.dev/" target="_blank" rel="noopener">打开在线 Demo →</a>      <a class="go" href="https://github.com/guoxianglina-ops/Newxgh-Test" target="_blank" rel="noopener" style="margin-left:18px">看源码 →</a>
+    </div>
+    <div class="shots">
+      <img src="./img/dashboard.jpg" alt="系统首页仪表盘">
+      <p class="cap">首页仪表盘 · 左侧为 20+ 模块导航，右上角为角色与待办提醒</p>
+      <img src="./img/stock.jpg" alt="库存查询">
+      <p class="cap">库存查询 · 支持按仓库/商品过滤，每行可展开全链路批次溯源</p>
+      <img src="./img/qrcode.jpg" alt="二维码快速出入库">
+      <p class="cap">二维码快速出入库 · 全局配置可逐字段锁定，锁定的字段手机端扫码后不可修改</p>
+    </div>
   </div>
 
   <!-- 3. Abaqus MCP -->
