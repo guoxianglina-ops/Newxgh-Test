@@ -4,273 +4,511 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>郭相麟 · 作品集</title>
+<meta name="description" content="郭相麟的项目作品集：AI 创业者 MBTI、仓储管理系统、Abaqus MCP Server、TestCaseForge 等六个项目。">
 <style>
-  *{margin:0;padding:0;box-sizing:border-box}
-  :root{
-    --pri:#1890ff;--pri-d:#096dd9;--tx:#1a1a1a;--tx2:#5a6472;--tx3:#8c98a8;
-    --bd:#e6ebf2;--bg:#f6f8fb;--w:#fff;--sh:0 1px 2px rgba(16,24,40,.04),0 8px 24px rgba(16,24,40,.06);
-  }
-  body{font:15px/1.75 -apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei","PingFang SC",sans-serif;color:var(--tx);background:var(--bg);-webkit-font-smoothing:antialiased}
-  .wrap{max-width:1000px;margin:0 auto;padding:0 20px}
+/* ============================================================
+   视觉语言取自剪映落地页（capcut-replica/index.html）：
+   纯黑底 / 青色渐变主色 / 毛玻璃胶囊 / 28px 大圆角 / 1px 白描边
+   / 100px 区块留白。版式与信息结构仍按作品集自己的需要组织。
+   ============================================================ */
 
-  /* 头部 */
-  .hero{background:linear-gradient(135deg,#001529 0%,#003a8c 60%,#096dd9 100%);color:#fff;padding:64px 0 56px}
-  .hero h1{font-size:34px;font-weight:600;letter-spacing:.5px;margin-bottom:10px}
-  .hero .sub{font-size:15px;color:rgba(255,255,255,.78);line-height:1.9;max-width:680px}
-  .links{margin-top:26px;display:flex;flex-wrap:wrap;gap:10px}
-  .links a{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;border-radius:8px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.22);color:#fff;text-decoration:none;font-size:14px;transition:.2s}
-  .links a:hover{background:rgba(255,255,255,.22)}
-  .links a.pri{background:#fff;color:var(--pri-d);border-color:#fff;font-weight:600}
-  .links a.pri:hover{background:#f0f7ff}
+*{margin:0;padding:0;box-sizing:border-box}
 
-  /* 正文 */
-  main{padding:44px 0 72px}
-  .lead{font-size:15px;color:var(--tx2);line-height:2.1;margin-bottom:44px;padding-left:18px;border-left:3px solid var(--pri)}
-  .lead strong{color:var(--tx)}
-  .sec-title{font-size:20px;font-weight:600;margin:0 0 6px}
-  .sec-desc{font-size:14px;color:var(--tx3);margin-bottom:22px}
+:root{
+  --bg:#000;
+  --tx:#fff;
+  --tx2:hsla(0,0%,100%,.72);
+  --tx3:hsla(0,0%,100%,.45);
+  --cy:#00cae0;
+  --cy-l:#2ceaff;
+  --grad:linear-gradient(269deg,#00ffe4 -3.38%,#178cde 125.42%);
+  --line:hsla(0,0%,100%,.12);
+  --line-2:hsla(0,0%,100%,.24);
+  --glass:hsla(0,0%,100%,.051);
+  --surface:#0c121a;
+  --r:28px;
+}
 
-  /* 项目卡片 */
-  .card{background:var(--w);border:1px solid var(--bd);border-radius:14px;padding:26px 28px;margin-bottom:20px;box-shadow:var(--sh)}
-  .card.feature{padding:0;overflow:hidden}
-  .card-top{display:flex;flex-wrap:wrap;align-items:baseline;gap:10px;margin-bottom:6px}
-  .card h3{font-size:18px;font-weight:600}
-  .badge{font-size:11px;padding:2px 9px;border-radius:5px;background:#e6f7ff;color:var(--pri-d);border:1px solid #bae0ff;font-weight:600}
-  .badge.on{background:#f6ffed;color:#389e0d;border-color:#b7eb8f}
-  .card .solves{font-size:14px;color:var(--tx2);line-height:1.95;margin:10px 0 14px}
-  .card ul{list-style:none;margin:0 0 14px}
-  .card ul li{font-size:14px;color:var(--tx2);line-height:1.95;padding-left:16px;position:relative}
-  .card ul li::before{content:"";position:absolute;left:2px;top:12px;width:5px;height:5px;border-radius:50%;background:var(--pri);opacity:.55}
-  .tags{display:flex;flex-wrap:wrap;gap:7px;margin-top:14px}
-  .tags span{font-size:12px;color:var(--tx2);background:#f1f5fa;border:1px solid var(--bd);border-radius:5px;padding:3px 10px}
-  .card .go{display:inline-block;margin-top:16px;font-size:14px;color:var(--pri);text-decoration:none;font-weight:600}
-  .card .go:hover{text-decoration:underline}
+html{scroll-behavior:smooth}
 
-  .shots{background:#fafcff;border-top:1px solid var(--bd);padding:20px 28px 24px}
-  .shots img{width:100%;border:1px solid var(--bd);border-radius:8px;display:block;margin-bottom:12px;box-shadow:0 2px 10px rgba(16,24,40,.07)}
-  .shots img:last-child{margin-bottom:0}
-  .shots .cap{font-size:12px;color:var(--tx3);margin:-6px 0 14px 2px}
-  .shots .row3{display:flex;gap:14px}
-  .shots .row3 > div{flex:1;min-width:0}
-  .shots .row3 img{margin-bottom:8px}
-  .inner{padding:26px 28px 22px}
+body{
+  background:var(--bg);color:var(--tx);
+  font:400 16px/1.7 "PingFang SC",-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei",sans-serif;
+  -webkit-font-smoothing:antialiased;overflow-x:hidden;
+}
 
-  /* 数据条 */
-  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:12px;margin:18px 0 6px}
-  .stats div{background:#f7faff;border:1px solid var(--bd);border-radius:9px;padding:12px 14px}
-  .stats b{display:block;font-size:19px;color:var(--pri-d);font-weight:600;line-height:1.3}
-  .stats i{font-style:normal;font-size:12px;color:var(--tx3)}
+.wrap{max-width:1180px;margin:0 auto;padding:0 40px}
+a{color:inherit;text-decoration:none}
+ul{list-style:none}
+img{display:block;max-width:100%}
 
-  footer{border-top:1px solid var(--bd);padding:28px 0 40px;font-size:13px;color:var(--tx3);text-align:center}
-  footer a{color:var(--pri);text-decoration:none}
+/* ---------- 顶部导航 ---------- */
+.hd{
+  position:fixed;top:0;left:0;width:100%;z-index:20;
+  background:rgba(0,0,0,.72);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--line);
+}
+.hd-in{
+  max-width:1180px;margin:0 auto;padding:16px 40px;
+  display:flex;align-items:center;justify-content:space-between;gap:24px;
+}
+.hd-logo{font-size:16px;font-weight:600;letter-spacing:.5px}
+.hd-nav{display:flex;gap:32px;margin-left:auto}
+.hd-nav a{font-size:14px;color:var(--tx2);transition:color .3s ease}
+.hd-nav a:hover{color:var(--cy-l)}
+.hd-cta{
+  font-size:14px;color:var(--cy-l);padding:10px 16px;border-radius:8px;
+  background:rgba(0,198,224,.3);transition:background .3s ease;
+}
+.hd-cta:hover{background:rgba(0,198,224,.45)}
 
-  @media(max-width:640px){
-    .hero{padding:44px 0 40px}.hero h1{font-size:26px}
-    .card,.inner{padding:20px}.shots{padding:16px 20px 20px}
-    body{font-size:14px}
-  }
+/* ---------- Hero ---------- */
+.hero{padding:180px 0 100px;position:relative;overflow:hidden}
+.hero::before{
+  content:"";position:absolute;top:-200px;left:50%;transform:translateX(-50%);
+  width:1100px;height:700px;pointer-events:none;
+  background:radial-gradient(closest-side,rgba(0,202,224,.16),rgba(0,0,0,0) 70%);
+}
+.hero-in{position:relative;display:flex;flex-direction:column;gap:28px;max-width:820px}
+.hero-badge{
+  display:inline-flex;align-items:center;gap:8px;width:fit-content;
+  padding:8px 16px;border-radius:58px;
+  background:var(--glass);border:.5px solid var(--line);
+  color:var(--cy-l);font-size:14px;
+}
+.hero-title{font-size:68px;font-weight:600;line-height:1.12;letter-spacing:.5px}
+.hero-sub{font-size:18px;color:var(--tx2);line-height:1.7}
+.hero-actions{display:flex;flex-wrap:wrap;gap:16px;margin-top:12px}
+.btn-main{
+  display:inline-flex;align-items:center;gap:8px;
+  background:var(--grad);color:#000;font-size:16px;
+  padding:18px 48px;border-radius:12px;
+  transition:transform .3s ease,box-shadow .3s ease;
+}
+.btn-main:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(0,202,224,.35)}
+.btn-ghost{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:18px 32px;border-radius:12px;font-size:16px;color:#fff;
+  background:hsla(0,0%,100%,.08);border:.5px solid var(--line-2);
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  transition:background .3s ease;
+}
+.btn-ghost:hover{background:hsla(0,0%,100%,.16)}
+
+/* ---------- 引言 ---------- */
+.intro{padding:0 0 100px}
+.lead{
+  font-size:17px;line-height:2;color:var(--tx2);
+  padding:32px;border-radius:var(--r);
+  background:linear-gradient(106deg,rgba(0,202,224,.06) -22%,rgba(0,0,0,0) 62%),var(--surface);
+  border:.5px solid var(--line);
+}
+.lead strong{color:#fff;font-weight:600}
+
+/* ---------- 区块标题 ---------- */
+.sec-title{font-size:56px;font-weight:600;line-height:1.2}
+.sec-desc{font-size:16px;color:var(--tx3);margin-top:16px}
+
+/* ---------- 项目 ---------- */
+.projects{padding:0 0 40px}
+.projects .sec-head{display:flex;flex-direction:column;gap:0;margin-bottom:56px}
+
+.card{
+  position:relative;border-radius:var(--r);margin-bottom:16px;overflow:hidden;
+  background:var(--surface);border:.5px solid var(--line);
+  transition:border-color .3s ease,transform .3s ease;
+}
+.card:hover{border-color:hsla(0,0%,100%,.2)}
+.card::after{
+  content:"";position:absolute;inset:0;pointer-events:none;opacity:0;transition:opacity .4s ease;
+  background:radial-gradient(552% 81% at 0 0,rgba(16,172,223,.1) 0,rgba(16,172,223,0) 100%);
+}
+.card:hover::after{opacity:1}
+
+.inner{padding:40px 44px}
+
+.card-head{display:flex;flex-wrap:wrap;align-items:center;gap:14px;margin-bottom:8px}
+.idx{
+  font-size:14px;color:var(--cy);font-weight:600;letter-spacing:1px;
+  font-variant-numeric:tabular-nums;
+}
+.card h3{font-size:30px;font-weight:600;line-height:1.3}
+.badge{
+  font-size:13px;padding:8px 14px;border-radius:10px;
+  background:hsla(0,0%,100%,.1);border:.5px solid var(--line-2);color:#fff;
+  backdrop-filter:blur(9px);-webkit-backdrop-filter:blur(9px);
+}
+.badge.on{background:rgba(0,202,224,.16);border-color:rgba(44,234,255,.35);color:var(--cy-l)}
+
+.solves{font-size:16px;color:var(--tx2);line-height:1.9;margin:16px 0 20px}
+.solves strong{color:#fff}
+
+.card ul{margin:0 0 20px;display:flex;flex-direction:column;gap:10px}
+.card ul li{
+  position:relative;padding-left:20px;font-size:15px;color:var(--tx2);line-height:1.85;
+}
+.card ul li::before{
+  content:"";position:absolute;left:2px;top:12px;
+  width:6px;height:6px;border-radius:50%;
+  background:var(--cy);box-shadow:0 0 8px rgba(0,202,224,.8);
+}
+.card ul li strong{color:#fff}
+
+/* 数据条 */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin:4px 0 20px}
+.stats div{
+  background:var(--glass);border:.5px solid var(--line);border-radius:16px;padding:16px 18px;
+}
+.stats b{display:block;font-size:22px;font-weight:600;color:var(--cy-l);line-height:1.3}
+.stats i{font-style:normal;font-size:13px;color:var(--tx3)}
+
+/* 标签 */
+.tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:4px}
+.tags span{
+  font-size:13px;color:var(--tx2);padding:6px 14px;border-radius:10px;
+  background:var(--glass);border:.5px solid var(--line);
+  transition:color .3s ease,border-color .3s ease;
+}
+.tags span:hover{color:var(--cy-l);border-color:rgba(44,234,255,.35)}
+
+/* 链接 */
+.card-links{display:flex;flex-wrap:wrap;gap:28px;margin-top:20px}
+.go{font-size:15px;font-weight:600;color:var(--cy);transition:color .3s ease}
+.go:hover{color:var(--cy-l)}
+
+/* 截图 */
+.shots{
+  padding:24px 44px 40px;display:grid;gap:16px;
+  border-top:.5px solid var(--line);
+}
+.shots.cols-2{grid-template-columns:repeat(2,1fr)}
+.shots.cols-3{grid-template-columns:repeat(3,1fr)}
+.shots figure{display:flex;flex-direction:column;gap:10px;min-width:0}
+.shots img{
+  width:100%;height:auto;border-radius:24px;border:.5px solid var(--line);
+  transition:transform .3s ease;transform-origin:center;
+}
+.shots.cols-3 figure:hover img,
+.shots.cols-2 figure:hover img{transform:scale(1.02)}
+.shots .cap{font-size:13px;color:var(--tx3);line-height:1.7}
+
+/* ---------- 底部 CTA ---------- */
+.cta{padding:100px 0;text-align:center}
+.cta-in{display:flex;flex-direction:column;align-items:center;gap:28px}
+.cta-title{font-size:56px;font-weight:600;line-height:1.2}
+.cta-sub{font-size:16px;color:var(--tx3)}
+.cta-actions{display:flex;flex-wrap:wrap;gap:16px;justify-content:center}
+
+/* ---------- 页脚 ---------- */
+.footer{
+  padding:40px 0 56px;text-align:center;
+  border-top:1px solid var(--line);
+}
+.footer p{font-size:14px;color:var(--tx3)}
+
+/* ---------- 进场动画 ----------
+   一开始这里用的是 CSS 滚动驱动动画（animation-timeline: view()），想做成
+   「滚到哪淡入到哪」。上线后实测发现它有个致命副作用：元素在进入视口之前
+   opacity 一直是 0 —— 于是整页截图、打印、以及任何不滚动的渲染方式下，
+   页面从「项目」往下的部分整片是黑的。
+
+   改成剪映原站真正的做法：纯时间驱动的 fadeIn + 错峰延迟。
+   （原站 landing-page.css 里的 .fade-in 就是这么写的，那个 @supports 只是
+   能力开关，并没有真的挂 view-timeline。）加载完成即全部可见，
+   不存在「内容被动画藏起来」的风险，观感也一样。
+*/
+@keyframes reveal{
+  from{opacity:0;transform:translateY(18px)}
+  to{opacity:1;transform:translateY(0)}
+}
+.reveal{
+  animation:reveal .85s ease both;
+  animation-delay:var(--d,90ms);
+}
+.projects article:nth-of-type(1){--d:60ms}
+.projects article:nth-of-type(2){--d:120ms}
+.projects article:nth-of-type(3){--d:180ms}
+.projects article:nth-of-type(4){--d:240ms}
+.projects article:nth-of-type(5){--d:300ms}
+.projects article:nth-of-type(6){--d:360ms}
+
+@media (prefers-reduced-motion:reduce){
+  .reveal{animation:none}
+  html{scroll-behavior:auto}
+}
+
+/* ---------- 响应式 ---------- */
+@media(max-width:1024px){
+  .hero{padding:140px 0 72px}
+  .hero-title{font-size:48px}
+  .sec-title,.cta-title{font-size:40px}
+  .card h3{font-size:24px}
+  .inner{padding:32px 28px}
+  .shots{padding:20px 28px 32px}
+  .shots.cols-3{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:640px){
+  .wrap{padding:0 20px}
+  .hd-in{padding:14px 20px}
+  .hd-nav{display:none}
+  .hero{padding:120px 0 56px}
+  .hero-title{font-size:34px}
+  .hero-sub{font-size:16px}
+  .sec-title,.cta-title{font-size:28px}
+  .card h3{font-size:20px}
+  .lead{padding:22px}
+  .inner{padding:24px 20px}
+  .shots{padding:16px 20px 24px}
+  .shots.cols-3,.shots.cols-2{grid-template-columns:1fr}
+  .btn-main,.btn-ghost{padding:16px 24px;font-size:15px}
+}
 </style>
 </head>
 <body>
 
-<header class="hero">
-  <div class="wrap">
-    <h1>郭相麟</h1>
-    <p class="sub">独立做过完整的业务系统，也做过让 Agent 去操作软件的工具。<br>关注方向：Agent 如何真正落到业务里，以及 AI 与工程软件、硬件之间的那层接口。</p>
-    <div class="links">
-      <a class="pri" href="https://ai-mbti.xyz/" target="_blank" rel="noopener">在线产品 · AI 创业者 MBTI</a>
-      <a href="https://test-project-xgh.pages.dev/" target="_blank" rel="noopener">在线 Demo · 仓储管理系统</a>
-      <a href="https://github.com/guoxianglina-ops/Newxgh-Test" target="_blank" rel="noopener">GitHub · 源码</a>
-    </div>
+<header class="hd">
+  <div class="hd-in">
+    <a class="hd-logo" href="#top">郭相麟</a>
+    <nav class="hd-nav">
+      <a href="#projects">项目</a>
+      <a href="#contact">联系</a>
+    </nav>
+    <a class="hd-cta" href="https://github.com/guoxianglina-ops/Newxgh-Test" target="_blank" rel="noopener">GitHub · 源码</a>
   </div>
 </header>
 
-<main class="wrap">
-
-  <p class="lead">
-    我做的项目基本围绕同一件事：<strong>把那些原本只能靠人点、靠人手算的流程，交给一个能被验证的系统或 Agent 去做。</strong><br>
-    AI 创业者 MBTI 是其中唯一一个直接面向普通用户、真正上线在跑的产品，所以放在最前面。<br>
-    开发方式是人机协作——我定义产品、定验收标准、判断每一版够不够用，AI 完成编码，我再逐版验证结果是否达标。下面六个项目都是这样与 AI 合作完成的。
-  </p>
-
-  <h2 class="sec-title">项目</h2>
-  <p class="sec-desc">已上线运营的排在最前，其余按完成度排列</p>
-
-  <!-- 1. AI 创业者 MBTI（真正上线，放最前） -->
-  <div class="card feature">
-   <div class="inner">
-    <div class="card-top">
-      <h3>AI 创业者 MBTI · 在线测评站</h3>
-      <span class="badge on">已上线运营</span>
-    </div>
-    <p class="solves">
-      <strong>解决的问题：</strong>面向 AI 从业者和创业者的人格测评——回答 40 道二选一题目，得到一个四字母人格代码和对应的中文身份。
-    </p>
-    <ul>
-      <li>40 题题库 + 随机抽题 + 场景多样性约束 + A/B 随机化</li>
-      <li>评分引擎：四字母、倾向值、第二人格、搭子、宿敌、标签</li>
-      <li>Canvas 合成分享图（内嵌二维码），可直接转发</li>
-      <li>后端：结果提交含 24 小时去重与 IP 限流、设备指纹绑定、匿名后台看板</li>
-      <li><strong>我的角色</strong>：产品定义、文案验收标准与上线，全站文案由 AI 生成、我逐条定稿，代码与 AI 合作完成</li>
-    </ul>
-    <div class="tags">
-      <span>React 19</span><span>Vite</span><span>Tailwind v4</span>
-      <span>Cloudflare Pages</span><span>Pages Functions</span><span>Cloudflare D1</span>
-    </div>
-    <a class="go" href="https://ai-mbti.xyz/" target="_blank" rel="noopener">打开在线产品 →</a>
-   </div>
-   <div class="shots">
-    <div class="row3">
-      <div><img src="./img/mbti-home.jpg" alt="AI 创业者 MBTI 首页"><p class="cap">首页</p></div>
-      <div><img src="./img/mbti-test.jpg" alt="答题页"><p class="cap">40 道二选一</p></div>
-      <div><img src="./img/mbti-result.jpg" alt="结果页"><p class="cap">结果：人格代码 + 判词 + 同派创业者</p></div>
-    </div>
-    <img src="./img/mbti-admin.jpg" alt="管理后台">
-    <p class="cap">管理后台 · 总测试数、计入统计、今日/昨日新增、人格分布与测试记录</p>
-   </div>
-  </div>
-
-  <!-- 2. 仓储管理系统 -->
-  <div class="card feature">
-    <div class="inner">
-      <div class="card-top">
-        <h3>仓储管理系统（内置 AI 助手）</h3>
-        <span class="badge">在线 Demo</span>
-      </div>
-      <p class="solves">
-        <strong>解决的问题：</strong>中小仓库普遍用纸质单或 Excel 管库存，员工必须走到电脑前手动录入；电脑端和手机端数据不互通；出了质量问题追溯不到具体批次；制单人、审核人、主管之间没有清晰的状态流转。
-        我用一套 Web 端系统覆盖了 20+ 个业务模块，核心是<strong>二维码扫码出入库</strong>——生成二维码、打印贴标、手机扫码自动建单，员工不用回电脑前。
+<section class="hero" id="top">
+  <div class="wrap">
+    <div class="hero-in">
+      <span class="hero-badge">人机协作 · 六个项目</span>
+      <h1 class="hero-title">郭相麟</h1>
+      <p class="hero-sub">
+        独立做过完整的业务系统，也做过让 Agent 去操作软件的工具。<br>
+        关注方向：Agent 如何真正落到业务里，以及 AI 与工程软件、硬件之间的那层接口。
       </p>
-      <ul>
-        <li><strong>AI 助手（Agent 部分）</strong>：内置操作型 AI，接 DeepSeek，可以不只问答——通过多轮对话直接创建采购单和销售单，带确认卡片、信息补全和主动提议；检索层用 RAG 结合业务实时数据做跨模块分析</li>
-        <li><strong>容错设计</strong>：没有 API Key 时自动降级为纯本地检索，系统不会瘫</li>
-        <li><strong>数据层</strong>：PostgreSQL JSONB 单表存储，前端做乐观锁并发控制与 ID 预分配池；断网自动降级到本地存储</li>
-        <li><strong>业务深度</strong>：全链路批次溯源、FIFO 批次消耗、三级角色与审核状态机、库存预警与跨仓调拨</li>
-        <li><strong>可验证</strong>：为 AI 助手设计了 30 条测试用例、分 6 大类，其中专门有一类「不需要 AI 的用例」，用来界定哪些操作不该交给模型</li>
-        <li><strong>我的角色</strong>：产品定义、模块与流程设计、每一版的验收标准，以及 70 多个版本的迭代判断——编码由 AI 协作完成</li>
-      </ul>
-      <div class="stats">
-        <div><b>约 4,700</b><i>行前端代码（与 AI 协作）</i></div>
-        <div><b>20+</b><i>业务模块</i></div>
-        <div><b>70+</b><i>版本迭代</i></div>
-        <div><b>约 2 个月</b><i>与 AI 协作开发</i></div>
+      <div class="hero-actions">
+        <a class="btn-main" href="https://ai-mbti.xyz/" target="_blank" rel="noopener">在线产品 · AI 创业者 MBTI</a>
+        <a class="btn-ghost" href="https://test-project-xgh.pages.dev/" target="_blank" rel="noopener">在线 Demo · 仓储管理系统</a>
+        <a class="btn-ghost" href="https://github.com/guoxianglina-ops/Newxgh-Test" target="_blank" rel="noopener">GitHub · 源码</a>
       </div>
-      <div class="tags">
-        <span>原生 JS SPA</span><span>REST API</span><span>PostgreSQL / JSONB</span>
-        <span>Supabase</span><span>DeepSeek</span><span>RAG</span><span>MCP 工具调用</span>
+    </div>
+  </div>
+</section>
+
+<section class="intro">
+  <div class="wrap">
+    <p class="lead reveal">
+      我做的项目基本围绕同一件事：<strong>把那些原本只能靠人点、靠人手算的流程，交给一个能被验证的系统或 Agent 去做。</strong><br>
+      AI 创业者 MBTI 是其中唯一一个直接面向普通用户、真正上线在跑的产品，所以放在最前面。<br>
+      开发方式是人机协作——我定义产品、定验收标准、判断每一版够不够用，AI 完成编码，我再逐版验证结果是否达标。下面六个项目都是这样与 AI 合作完成的。
+    </p>
+  </div>
+</section>
+
+<main class="projects" id="projects">
+  <div class="wrap">
+
+    <div class="sec-head reveal">
+      <h2 class="sec-title">项目</h2>
+      <p class="sec-desc">已上线运营的排在最前，其余按完成度排列</p>
+    </div>
+
+    <!-- 1. AI 创业者 MBTI -->
+    <article class="card reveal">
+      <div class="inner">
+        <div class="card-head">
+          <span class="idx">01</span>
+          <h3>AI 创业者 MBTI · 在线测评站</h3>
+          <span class="badge on">已上线运营</span>
+        </div>
+        <p class="solves">
+          <strong>解决的问题：</strong>面向 AI 从业者和创业者的人格测评——回答 40 道二选一题目，得到一个四字母人格代码和对应的中文身份。
+        </p>
+        <ul>
+          <li>40 题题库 + 随机抽题 + 场景多样性约束 + A/B 随机化</li>
+          <li>评分引擎：四字母、倾向值、第二人格、搭子、宿敌、标签</li>
+          <li>Canvas 合成分享图（内嵌二维码），可直接转发</li>
+          <li>后端：结果提交含 24 小时去重与 IP 限流、设备指纹绑定、匿名后台看板</li>
+          <li><strong>我的角色</strong>：产品定义、文案验收标准与上线，全站文案由 AI 生成、我逐条定稿，代码与 AI 合作完成</li>
+        </ul>
+        <div class="tags">
+          <span>React 19</span><span>Vite</span><span>Tailwind v4</span>
+          <span>Cloudflare Pages</span><span>Pages Functions</span><span>Cloudflare D1</span>
+        </div>
+        <div class="card-links">
+          <a class="go" href="https://ai-mbti.xyz/" target="_blank" rel="noopener">打开在线产品 →</a>
+        </div>
       </div>
-      <a class="go" href="https://test-project-xgh.pages.dev/" target="_blank" rel="noopener">打开在线 Demo →</a>      <a class="go" href="https://github.com/guoxianglina-ops/Newxgh-Test" target="_blank" rel="noopener" style="margin-left:18px">看源码 →</a>
-    </div>
-    <div class="shots">
-      <img src="./img/dashboard.jpg" alt="系统首页仪表盘">
-      <p class="cap">首页仪表盘 · 左侧为 20+ 模块导航，右上角为角色与待办提醒</p>
-      <img src="./img/stock.jpg" alt="库存查询">
-      <p class="cap">库存查询 · 支持按仓库/商品过滤，每行可展开全链路批次溯源</p>
-      <img src="./img/qrcode.jpg" alt="二维码快速出入库">
-      <p class="cap">二维码快速出入库 · 全局配置可逐字段锁定，锁定的字段手机端扫码后不可修改</p>
-    </div>
-  </div>
-
-  <!-- 3. Abaqus MCP -->
-  <div class="card feature">
-   <div class="inner">
-      <div class="card-top">
-        <h3>Abaqus MCP Server</h3>
-        <span class="badge">让 Agent 操作工程软件</span>
+      <div class="shots cols-3">
+        <figure><img src="./img/mbti-home.jpg" alt="AI 创业者 MBTI 首页"><figcaption class="cap">首页</figcaption></figure>
+        <figure><img src="./img/mbti-test.jpg" alt="答题页"><figcaption class="cap">40 道二选一</figcaption></figure>
+        <figure><img src="./img/mbti-result.jpg" alt="结果页"><figcaption class="cap">结果：人格代码 + 判词 + 同派创业者</figcaption></figure>
+        <figure style="grid-column:1/-1"><img src="./img/mbti-admin.jpg" alt="管理后台"><figcaption class="cap">管理后台 · 总测试数、计入统计、今日/昨日新增、人格分布与测试记录</figcaption></figure>
       </div>
-      <p class="solves">
-        <strong>解决的问题：</strong>有限元仿真工程师大量时间花在重复建模、提交作业、读取结果上——这些操作本该能用一句话描述清楚。
-      </p>
-      <ul>
-        <li>用 Python 实现 MCP 协议服务端，把建模、提交求解、读取结果封装成 Agent 可调用的工具集</li>
-        <li>配了可复现的悬臂梁算例（含 .inp / .odb / .dat 成套文件），每一步可复现、可验证</li>
-        <li>另有一个 Control 版本，工程化更规范（pyproject + uv.lock + headless backend）</li>
-      </ul>
-      <div class="tags"><span>Python</span><span>MCP 协议</span><span>Abaqus / CAE</span><span>Tool Use</span></div>
-   </div>
-   <div class="shots">
-    <div class="row3">
-      <div><img src="./img/abaqus-mesh.jpg" alt="模型网格"><p class="cap">模型网格 · 洞口周边做了局部加密</p></div>
-      <div><img src="./img/abaqus-mises.jpg" alt="Mises 应力云图"><p class="cap">Mises 应力云图 · 洞口附近应力集中</p></div>
-    </div>
-    <img src="./img/abaqus-agent.jpg" alt="与 Agent 协作做参数化研究">
-    <p class="cap">与 Agent 协作做参数化研究 · 左侧工程目录、中间 24 组参数工况表、右侧逐条核对计算结果</p>
-   </div>
-  </div>
+    </article>
 
-  <!-- 4. TestCaseForge -->
-  <div class="card feature">
-   <div class="inner">
-    <div class="card-top">
-      <h3>TestCaseForge · 测试用例工坊</h3>
-      <span class="badge">游戏方向</span>
-    </div>
-    <p class="solves">
-      <strong>解决的问题：</strong>做游戏测试实习时我发现策划案改得比用例写得快，于是做了这个工具——把策划案 PDF 或 Word 拖进去，一键生成符合团队《测试用例风格规范》的 Excel。
-    </p>
-    <ul>
-      <li>PySide6 桌面程序，打包成 exe 直接给同事用</li>
-      <li>支持加载自定义风格规范文件，生成的用例严格遵循格式</li>
-      <li>覆盖 Rummy GO 召唤系统、锦标赛高倍场活动等模块的用例设计</li>
-      <li><strong>我的角色</strong>：从真实工作痛点出发定义工具、定输出格式规范，AI 辅助完成开发</li>
-    </ul>
-    <div class="tags"><span>Python</span><span>PySide6</span><span>Claude API</span><span>pdfplumber</span><span>openpyxl</span></div>
-   </div>
-   <div class="shots">
-    <img src="./img/tcf-workspace.jpg" alt="TestCaseForge 工作区">
-    <p class="cap">工作区 · 上方两侧分别拖入策划案与已有用例（后者可选），下方是生成的用例表；选中一行可在「详情 / 编辑」里改测试步骤与数据，底部一键导出本地 Excel 或同步到飞书表格</p>
-    <img src="./img/tcf-config.jpg" alt="TestCaseForge 配置页">
-    <p class="cap">配置页 · 模型与最大输出可调；「风格规范」支持加载自定义 .md，生成的用例会严格遵循这份规范</p>
-   </div>
-  </div>
+    <!-- 2. 仓储管理系统 -->
+    <article class="card reveal">
+      <div class="inner">
+        <div class="card-head">
+          <span class="idx">02</span>
+          <h3>仓储管理系统（内置 AI 助手）</h3>
+          <span class="badge">在线 Demo</span>
+        </div>
+        <p class="solves">
+          <strong>解决的问题：</strong>中小仓库普遍用纸质单或 Excel 管库存，员工必须走到电脑前手动录入；电脑端和手机端数据不互通；出了质量问题追溯不到具体批次；制单人、审核人、主管之间没有清晰的状态流转。
+          我用一套 Web 端系统覆盖了 20+ 个业务模块，核心是<strong>二维码扫码出入库</strong>——生成二维码、打印贴标、手机扫码自动建单，员工不用回电脑前。
+        </p>
+        <ul>
+          <li><strong>AI 助手（Agent 部分）</strong>：内置操作型 AI，接 DeepSeek，可以不只问答——通过多轮对话直接创建采购单和销售单，带确认卡片、信息补全和主动提议；检索层用 RAG 结合业务实时数据做跨模块分析</li>
+          <li><strong>容错设计</strong>：没有 API Key 时自动降级为纯本地检索，系统不会瘫</li>
+          <li><strong>数据层</strong>：PostgreSQL JSONB 单表存储，前端做乐观锁并发控制与 ID 预分配池；断网自动降级到本地存储</li>
+          <li><strong>业务深度</strong>：全链路批次溯源、FIFO 批次消耗、三级角色与审核状态机、库存预警与跨仓调拨</li>
+          <li><strong>可验证</strong>：为 AI 助手设计了 30 条测试用例、分 6 大类，其中专门有一类「不需要 AI 的用例」，用来界定哪些操作不该交给模型</li>
+          <li><strong>我的角色</strong>：产品定义、模块与流程设计、每一版的验收标准，以及 70 多个版本的迭代判断——编码由 AI 协作完成</li>
+        </ul>
+        <div class="stats">
+          <div><b>约 4,700</b><i>行前端代码（与 AI 协作）</i></div>
+          <div><b>20+</b><i>业务模块</i></div>
+          <div><b>70+</b><i>版本迭代</i></div>
+          <div><b>约 2 个月</b><i>与 AI 协作开发</i></div>
+        </div>
+        <div class="tags">
+          <span>原生 JS SPA</span><span>REST API</span><span>PostgreSQL / JSONB</span>
+          <span>Supabase</span><span>DeepSeek</span><span>RAG</span><span>MCP 工具调用</span>
+        </div>
+        <div class="card-links">
+          <a class="go" href="https://test-project-xgh.pages.dev/" target="_blank" rel="noopener">打开在线 Demo →</a>
+          <a class="go" href="https://github.com/guoxianglina-ops/Newxgh-Test" target="_blank" rel="noopener">看源码 →</a>
+        </div>
+      </div>
+      <div class="shots cols-3">
+        <figure><img src="./img/dashboard.jpg" alt="系统首页仪表盘"><figcaption class="cap">首页仪表盘 · 左侧为 20+ 模块导航，右上角为角色与待办提醒</figcaption></figure>
+        <figure><img src="./img/stock.jpg" alt="库存查询"><figcaption class="cap">库存查询 · 支持按仓库/商品过滤，每行可展开全链路批次溯源</figcaption></figure>
+        <figure><img src="./img/qrcode.jpg" alt="二维码快速出入库"><figcaption class="cap">二维码快速出入库 · 全局配置可逐字段锁定，锁定的字段手机端扫码后不可修改</figcaption></figure>
+      </div>
+    </article>
 
-  <!-- 5. 看板 → 飞书日报 -->
-  <div class="card">
-    <div class="card-top">
-      <h3>看板变动 → 飞书日报自动化 Agent</h3>
-    </div>
-    <p class="solves">
-      <strong>解决的问题：</strong>项目看板每天在变，但没人愿意每天手动整理日报。
-    </p>
-    <ul>
-      <li>Node + Playwright 抓取看板变动，交给模型归纳成日报并自动写入飞书文档</li>
-      <li>支持早 / 中 / 晚三种模式，异常变动可被捕获</li>
-      <li>结果：日报从「每天 20 分钟的重复劳动」变成零人工</li>
-    </ul>
-    <div class="tags"><span>Node.js</span><span>Playwright</span><span>飞书开放接口</span><span>工作流自动化</span></div>
-  </div>
+    <!-- 3. Abaqus MCP -->
+    <article class="card reveal">
+      <div class="inner">
+        <div class="card-head">
+          <span class="idx">03</span>
+          <h3>Abaqus MCP Server</h3>
+          <span class="badge">让 Agent 操作工程软件</span>
+        </div>
+        <p class="solves">
+          <strong>解决的问题：</strong>有限元仿真工程师大量时间花在重复建模、提交作业、读取结果上——这些操作本该能用一句话描述清楚。
+        </p>
+        <ul>
+          <li><strong>技术上的那道坎</strong>：Abaqus 2020 内置的是 Python 2.7，而 MCP 客户端跑在 Python 3 —— 两边隔着一道语言版本墙，没法直接对接。这是整个改造里最麻烦的地方</li>
+          <li><strong>怎么跨过去</strong>：在现成的开源 MCP 项目基础上做适配改造 —— 桥接以 CAE 插件的形式加载进 Abaqus 自己的 Python 进程，MCP 服务端留在 Python 3 侧，中间用本地 socket 通信，只监听 127.0.0.1，数据不出机器</li>
+          <li><strong>也走过另一条路</strong>：用 GUI 自动化（pywinauto）模拟点菜单来执行脚本，基本流程能走通，但对界面版本和分辨率太敏感，最后弃用了</li>
+          <li><strong>现在能做到什么</strong>：Agent 在真实的 CAE 会话里执行脚本、提交作业、读结果，几何与网格实时更新，工程师可以随时看着。它接管的是重复劳动——「该建什么、结果对不对」仍然由人判断</li>
+          <li>同时留了一套可复现的悬臂梁算例（.inp / .odb / .dat 成套），用来验证每一步是否真的执行成功</li>
+        </ul>
+        <div class="tags">
+          <span>Python 2 / 3 跨版本</span><span>MCP 协议</span><span>本地 socket bridge</span><span>Abaqus / CAE</span><span>Tool Use</span>
+        </div>
+      </div>
+      <div class="shots cols-2">
+        <figure><img src="./img/abaqus-mesh.jpg" alt="模型网格"><figcaption class="cap">模型网格 · 洞口周边做了局部加密</figcaption></figure>
+        <figure><img src="./img/abaqus-mises.jpg" alt="Mises 应力云图"><figcaption class="cap">Mises 应力云图 · 洞口附近应力集中</figcaption></figure>
+        <figure style="grid-column:1/-1"><img src="./img/abaqus-agent.jpg" alt="与 Agent 协作做参数化研究"><figcaption class="cap">与 Agent 协作做参数化研究 · 左侧工程目录、中间 24 组参数工况表、右侧逐条核对计算结果</figcaption></figure>
+      </div>
+    </article>
 
-  <!-- 6. AI 新闻推送与迭代筛选 -->
-  <div class="card feature">
-   <div class="inner">
-    <div class="card-top">
-      <h3>AI 新闻推送与迭代筛选</h3>
-      <span class="badge">日常在跑</span>
-    </div>
-    <p class="solves">
-      <strong>解决的问题：</strong>AI 领域每天信息量太大，手动刷既费时间又容易漏掉重点；更麻烦的是兴趣点会变，固定的推荐流会越刷越不准。
-    </p>
-    <ul>
-      <li>维护一份新闻源清单，每天定时抓取多源内容</li>
-      <li>用一份「口味档案」定义筛什么、不筛什么，由模型筛选并汇总成中文简报</li>
-      <li>自动推送并归档，形成可回溯的推送台账</li>
-      <li><strong>迭代筛选</strong>：口味档案本身按推送后的反馈持续修改——筛得不准就改标准，下一轮结果跟着变</li>
-    </ul>
-    <div class="tags"><span>定时任务</span><span>内容筛选</span><span>工作流自动化</span><span>Prompt 工程</span></div>
-   </div>
-   <div class="shots">
-    <div class="row3">
-      <div><img src="./img/news-list.jpg" alt="推送记录"><p class="cap">推送记录 · 每天定时送达，上午一批、下午还有「午后新增」一批，全部留痕可回溯</p></div>
-      <div><img src="./img/news-detail.jpg" alt="简报正文"><p class="cap">简报正文 · 按「口味档案」筛出来的当日重点，每条带编号、标题与摘要</p></div>
-    </div>
-   </div>
-  </div>
+    <!-- 4. TestCaseForge -->
+    <article class="card reveal">
+      <div class="inner">
+        <div class="card-head">
+          <span class="idx">04</span>
+          <h3>TestCaseForge · 测试用例工坊</h3>
+          <span class="badge">游戏方向</span>
+        </div>
+        <p class="solves">
+          <strong>解决的问题：</strong>做游戏测试实习时我发现策划案改得比用例写得快，于是做了这个工具——把策划案 PDF 或 Word 拖进去，一键生成符合团队《测试用例风格规范》的 Excel。
+        </p>
+        <ul>
+          <li>PySide6 桌面程序，打包成 exe 直接给同事用</li>
+          <li>支持加载自定义风格规范文件，生成的用例严格遵循格式</li>
+          <li>覆盖 Rummy GO 召唤系统、锦标赛高倍场活动等模块的用例设计</li>
+          <li><strong>我的角色</strong>：从真实工作痛点出发定义工具、定输出格式规范，AI 辅助完成开发</li>
+        </ul>
+        <div class="tags">
+          <span>Python</span><span>PySide6</span><span>DeepSeek</span><span>pdfplumber</span><span>openpyxl</span>
+        </div>
+      </div>
+      <div class="shots">
+        <figure><img src="./img/tcf-workspace.jpg" alt="TestCaseForge 工作区"><figcaption class="cap">工作区 · 上方两侧分别拖入策划案与已有用例（后者可选），下方是生成的用例表；选中一行可在「详情 / 编辑」里改测试步骤与数据，底部一键导出本地 Excel 或同步到飞书表格</figcaption></figure>
+        <figure><img src="./img/tcf-config.jpg" alt="TestCaseForge 配置页"><figcaption class="cap">配置页 · 模型与最大输出可调；「风格规范」支持加载自定义 .md，生成的用例会严格遵循这份规范</figcaption></figure>
+      </div>
+    </article>
 
+    <!-- 5. 看板 → 飞书日报 -->
+    <article class="card reveal">
+      <div class="inner">
+        <div class="card-head">
+          <span class="idx">05</span>
+          <h3>看板变动 → 飞书日报自动化 Agent</h3>
+        </div>
+        <p class="solves">
+          <strong>解决的问题：</strong>项目看板每天在变，但没人愿意每天手动整理日报。
+        </p>
+        <ul>
+          <li>Node + Playwright 抓取看板变动，交给模型归纳成日报并自动写入飞书文档</li>
+          <li>支持早 / 中 / 晚三种模式，异常变动可被捕获</li>
+          <li>结果：日报从「每天 20 分钟的重复劳动」变成零人工</li>
+        </ul>
+        <div class="tags"><span>Node.js</span><span>Playwright</span><span>飞书开放接口</span><span>工作流自动化</span></div>
+      </div>
+    </article>
+
+    <!-- 6. AI 新闻推送与迭代筛选 -->
+    <article class="card reveal">
+      <div class="inner">
+        <div class="card-head">
+          <span class="idx">06</span>
+          <h3>AI 新闻推送与迭代筛选</h3>
+          <span class="badge">日常在跑</span>
+        </div>
+        <p class="solves">
+          <strong>解决的问题：</strong>AI 领域每天信息量太大，手动刷既费时间又容易漏掉重点；更麻烦的是兴趣点会变，固定的推荐流会越刷越不准。
+        </p>
+        <ul>
+          <li>维护一份新闻源清单，每天定时抓取多源内容</li>
+          <li>用一份「口味档案」定义筛什么、不筛什么，由模型筛选并汇总成中文简报</li>
+          <li>自动推送并归档，形成可回溯的推送台账</li>
+          <li><strong>迭代筛选</strong>：口味档案本身按推送后的反馈持续修改——筛得不准就改标准，下一轮结果跟着变</li>
+        </ul>
+        <div class="tags"><span>定时任务</span><span>内容筛选</span><span>工作流自动化</span><span>Prompt 工程</span></div>
+      </div>
+      <div class="shots cols-2">
+        <figure><img src="./img/news-list.jpg" alt="推送记录"><figcaption class="cap">推送记录 · 每天定时送达，上午一批、下午还有「午后新增」一批，全部留痕可回溯</figcaption></figure>
+        <figure><img src="./img/news-detail.jpg" alt="简报正文"><figcaption class="cap">简报正文 · 按「口味档案」筛出来的当日重点，每条带编号、标题与摘要</figcaption></figure>
+      </div>
+    </article>
+
+  </div>
 </main>
 
-<footer>
+<section class="cta" id="contact">
   <div class="wrap">
-    郭相麟 · 作品集 &nbsp;|&nbsp; 在线系统：<a href="https://test-project-xgh.pages.dev/" target="_blank" rel="noopener">test-project-xgh.pages.dev</a>
+    <div class="cta-in reveal">
+      <h2 class="cta-title">想看哪个，直接打开</h2>
+      <p class="cta-sub">在线产品、在线 Demo 与源码都在上面；下面是直达入口。</p>
+      <div class="cta-actions">
+        <a class="btn-main" href="https://ai-mbti.xyz/" target="_blank" rel="noopener">AI 创业者 MBTI</a>
+        <a class="btn-ghost" href="https://test-project-xgh.pages.dev/" target="_blank" rel="noopener">仓储管理系统 Demo</a>
+        <a class="btn-ghost" href="https://github.com/guoxianglina-ops/Newxgh-Test" target="_blank" rel="noopener">GitHub · 源码</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="wrap">
+    <p>郭相麟 · 作品集</p>
   </div>
 </footer>
 
