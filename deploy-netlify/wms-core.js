@@ -97,11 +97,22 @@ function syncStaffAccounts(){
 // 动态账户表 + 核心预置账户
 const ACCOUNTS = {'00':{name:'高级主管',role:'supervisor',password:'00'},'0':{name:'审核员',role:'auditor'},'1':{name:'张三',role:'staff'},'2':{name:'李四',role:'staff'}};
 let currentUser = null;
+
+/* ===== 展示期临时开关（临时改动，随时可回滚）=================================
+ * 上线展示期间临时移除登录校验：打开站点后点「登录」即可直接进入主界面，
+ * 不需要账号密码。
+ *
+ * 想恢复真正的登录校验：把下面 WMS_DEMO_BYPASS 改成 false 即可，
+ * 其它代码一行都不用动（hint 也会自动消失）。
+ * ========================================================================== */
+var WMS_DEMO_BYPASS = true;
+var WMS_DEMO_HINT = '展示期临时移除登录模块，点击登录按钮即可进入主界面';
 function initUser(){let s=sessionStorage.getItem('wms_user');if(s){currentUser=JSON.parse(s);syncStaffAccounts();$('userDisp').textContent='👤 '+currentUser.name;if(isAuditor()||isSupervisor()){document.body.classList.add('is-auditor');if(isSupervisor())document.body.classList.add('is-supervisor')}return true}else{ensureAccountPasswords();showLogin();return false}}
 function showLogin(){
   var lp=document.getElementById('loginPage');
   if(lp){
-    lp.innerHTML='<div style="text-align:center;margin-bottom:40px"><div style="font-size:60px">📦</div><h1 style="color:#fff;font-size:28px;margin:10px 0 4px">象过河仓库管理系统</h1><p style="color:rgba(255,255,255,.4);font-size:13px">XiangGuoHe WMS v2.13</p></div><div style="background:rgba(255,255,255,.95);border-radius:10px;padding:24px 20px;width:280px;margin:0 auto"><div class="fg" style="margin-bottom:12px"><input id="loginAcct" placeholder="账号" style="width:100%;font-size:16px;padding:10px;border-radius:6px;border:1px solid #e8e8e8"></div><div class="fg" style="margin-bottom:12px"><input id="loginPwd" type="password" placeholder="密码" style="width:100%;font-size:16px;padding:10px;border-radius:6px;border:1px solid #e8e8e8"></div><div style="display:flex;gap:8px;margin-top:16px"><button class="btn btn-o" style="flex:1" onclick="showChangePwd()">修改密码</button><button class="btn btn-p" style="flex:1" onclick="doLogin()">登录</button></div></div>';
+    var demoHint = WMS_DEMO_BYPASS ? '<div style="background:#e6f7ff;border:1px solid #91d5ff;color:#096dd9;border-radius:6px;padding:8px 10px;font-size:12px;line-height:1.6;margin-bottom:12px;text-align:center">'+WMS_DEMO_HINT+'</div>' : '';
+    lp.innerHTML='<div style="text-align:center;margin-bottom:40px"><div style="font-size:60px">📦</div><h1 style="color:#fff;font-size:28px;margin:10px 0 4px">象过河仓库管理系统</h1><p style="color:rgba(255,255,255,.4);font-size:13px">XiangGuoHe WMS v2.13</p></div><div style="background:rgba(255,255,255,.95);border-radius:10px;padding:24px 20px;width:280px;margin:0 auto"><div class="fg" style="margin-bottom:12px"><input id="loginAcct" placeholder="账号" style="width:100%;font-size:16px;padding:10px;border-radius:6px;border:1px solid #e8e8e8"></div><div class="fg" style="margin-bottom:12px"><input id="loginPwd" type="password" placeholder="密码" style="width:100%;font-size:16px;padding:10px;border-radius:6px;border:1px solid #e8e8e8"></div>'+demoHint+'<div style="display:flex;gap:8px;margin-top:16px"><button class="btn btn-o" style="flex:1" onclick="showChangePwd()">修改密码</button><button class="btn btn-p" style="flex:1" onclick="doLogin()">登录</button></div></div>';
     lp.style.display='flex';
     setTimeout(function(){var el=$('loginAcct');if(el)el.focus();},100);
   }
@@ -139,15 +150,25 @@ function doChangePwd(){
   toast('密码修改成功');clsModal();showLogin();
 }
 function doLogin(){
-  var aid=$('loginAcct').value.trim();
-  var pwd=$('loginPwd').value;
-  if(!aid){toast('请输入账号');return}
-  if(!pwd){toast('请输入密码');return}
-  ensureAccountPasswords();
-  syncStaffAccounts();
-  var acct=ACCOUNTS[aid];
-  if(!acct){toast('账号不存在');return}
-  if(acct.password!==pwd){toast('密码错误');return}
+  var aid, acct;
+  if(WMS_DEMO_BYPASS){
+    // 展示期临时移除登录模块：跳过账号密码校验，直接用最高权限账户进入。
+    // 恢复原逻辑只需把 WMS_DEMO_BYPASS 改成 false，下面这段就会被跳过。
+    ensureAccountPasswords();
+    syncStaffAccounts();
+    aid = ACCOUNTS['00'] ? '00' : Object.keys(ACCOUNTS)[0];
+    acct = ACCOUNTS[aid];
+  } else {
+    aid=$('loginAcct').value.trim();
+    var pwd=$('loginPwd').value;
+    if(!aid){toast('请输入账号');return}
+    if(!pwd){toast('请输入密码');return}
+    ensureAccountPasswords();
+    syncStaffAccounts();
+    acct=ACCOUNTS[aid];
+    if(!acct){toast('账号不存在');return}
+    if(acct.password!==pwd){toast('密码错误');return}
+  }
   currentUser={accountId:aid,name:acct.name,role:acct.role};
   sessionStorage.setItem('wms_user',JSON.stringify(currentUser));
   $('userDisp').textContent='👤 '+currentUser.name;

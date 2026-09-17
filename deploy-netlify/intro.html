@@ -155,7 +155,7 @@ img{display:block;max-width:100%}
 .card ul li strong{color:#fff}
 
 /* 数据条 */
-.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin:4px 0 20px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,220px));gap:12px;margin:4px 0 20px}
 .stats div{
   background:var(--glass);border:.5px solid var(--line);border-radius:16px;padding:16px 18px;
 }
@@ -268,26 +268,24 @@ img{display:block;max-width:100%}
 
 <header class="hd">
   <div class="hd-in">
-    <a class="hd-logo" href="#top">郭相麟</a>
+    <a class="hd-logo" href="#top">郭相麟 · 作品集</a>
     <nav class="hd-nav">
       <a href="#projects">项目</a>
-      <a href="#contact">联系</a>
+      <a href="https://github.com/guoxianglina-ops/Newxgh-Test" target="_blank" rel="noopener">GitHub · 源码</a>
     </nav>
-    <a class="hd-cta" href="https://github.com/guoxianglina-ops/Newxgh-Test" target="_blank" rel="noopener">GitHub · 源码</a>
   </div>
 </header>
 
 <section class="hero" id="top">
   <div class="wrap">
     <div class="hero-in">
-      <span class="hero-badge">人机协作 · 六个项目</span>
       <h1 class="hero-title">郭相麟</h1>
       <p class="hero-sub">
         独立做过完整的业务系统，也做过让 Agent 去操作软件的工具。<br>
         关注方向：Agent 如何真正落到业务里，以及 AI 与工程软件、硬件之间的那层接口。
       </p>
       <div class="hero-actions">
-        <a class="btn-main" href="https://ai-mbti.xyz/" target="_blank" rel="noopener">在线产品 · AI 创业者 MBTI</a>
+        <a class="btn-ghost" href="https://ai-mbti.xyz/" target="_blank" rel="noopener">在线产品 · AI 创业者 MBTI</a>
         <a class="btn-ghost" href="https://test-project-xgh.pages.dev/" target="_blank" rel="noopener">在线 Demo · 仓储管理系统</a>
         <a class="btn-ghost" href="https://github.com/guoxianglina-ops/Newxgh-Test" target="_blank" rel="noopener">GitHub · 源码</a>
       </div>
@@ -298,9 +296,8 @@ img{display:block;max-width:100%}
 <section class="intro">
   <div class="wrap">
     <p class="lead reveal">
-      我做的项目基本围绕同一件事：<strong>把那些原本只能靠人点、靠人手算的流程，交给一个能被验证的系统或 Agent 去做。</strong><br>
-      AI 创业者 MBTI 是其中唯一一个直接面向普通用户、真正上线在跑的产品，所以放在最前面。<br>
-      开发方式是人机协作——我定义产品、定验收标准、判断每一版够不够用，AI 完成编码，我再逐版验证结果是否达标。下面六个项目都是这样与 AI 合作完成的。
+      <strong>把那些原本只能靠人点、靠人手算的流程，交给一个能被验证的系统或 Agent 去做。</strong><br>
+      AI辅助开发——我定义产品、定验收标准、判断每一版够不够用，AI 完成编码，我再逐版验证结果是否达标。下面六个项目都是这样与 AI 合作完成的。
     </p>
   </div>
 </section>
@@ -353,7 +350,6 @@ img{display:block;max-width:100%}
         <div class="card-head">
           <span class="idx">02</span>
           <h3>仓储管理系统（内置 AI 助手）</h3>
-          <span class="badge">在线 Demo</span>
         </div>
         <p class="solves">
           <strong>解决的问题：</strong>中小仓库普遍用纸质单或 Excel 管库存，员工必须走到电脑前手动录入；电脑端和手机端数据不互通；出了质量问题追溯不到具体批次；制单人、审核人、主管之间没有清晰的状态流转。
@@ -368,10 +364,8 @@ img{display:block;max-width:100%}
           <li><strong>我的角色</strong>：产品定义、模块与流程设计、每一版的验收标准，以及 70 多个版本的迭代判断——编码由 AI 协作完成</li>
         </ul>
         <div class="stats">
-          <div><b>约 4,700</b><i>行前端代码（与 AI 协作）</i></div>
           <div><b>20+</b><i>业务模块</i></div>
           <div><b>70+</b><i>版本迭代</i></div>
-          <div><b>约 2 个月</b><i>与 AI 协作开发</i></div>
         </div>
         <div class="tags">
           <span>原生 JS SPA</span><span>REST API</span><span>PostgreSQL / JSONB</span>
@@ -382,7 +376,7 @@ img{display:block;max-width:100%}
           <a class="go" href="https://github.com/guoxianglina-ops/Newxgh-Test" target="_blank" rel="noopener">看源码 →</a>
         </div>
       </div>
-      <div class="shots cols-3">
+      <div class="shots">
         <figure><img src="./img/dashboard.jpg" alt="系统首页仪表盘"><figcaption class="cap">首页仪表盘 · 左侧为 20+ 模块导航，右上角为角色与待办提醒</figcaption></figure>
         <figure><img src="./img/stock.jpg" alt="库存查询"><figcaption class="cap">库存查询 · 支持按仓库/商品过滤，每行可展开全链路批次溯源</figcaption></figure>
         <figure><img src="./img/qrcode.jpg" alt="二维码快速出入库"><figcaption class="cap">二维码快速出入库 · 全局配置可逐字段锁定，锁定的字段手机端扫码后不可修改</figcaption></figure>
@@ -395,7 +389,6 @@ img{display:block;max-width:100%}
         <div class="card-head">
           <span class="idx">03</span>
           <h3>Abaqus MCP Server</h3>
-          <span class="badge">让 Agent 操作工程软件</span>
         </div>
         <p class="solves">
           <strong>解决的问题：</strong>有限元仿真工程师大量时间花在重复建模、提交作业、读取结果上——这些操作本该能用一句话描述清楚。
@@ -424,7 +417,6 @@ img{display:block;max-width:100%}
         <div class="card-head">
           <span class="idx">04</span>
           <h3>TestCaseForge · 测试用例工坊</h3>
-          <span class="badge">游戏方向</span>
         </div>
         <p class="solves">
           <strong>解决的问题：</strong>做游戏测试实习时我发现策划案改得比用例写得快，于是做了这个工具——把策划案 PDF 或 Word 拖进去，一键生成符合团队《测试用例风格规范》的 Excel。
@@ -432,7 +424,6 @@ img{display:block;max-width:100%}
         <ul>
           <li>PySide6 桌面程序，打包成 exe 直接给同事用</li>
           <li>支持加载自定义风格规范文件，生成的用例严格遵循格式</li>
-          <li>覆盖 Rummy GO 召唤系统、锦标赛高倍场活动等模块的用例设计</li>
           <li><strong>我的角色</strong>：从真实工作痛点出发定义工具、定输出格式规范，AI 辅助完成开发</li>
         </ul>
         <div class="tags">
@@ -470,7 +461,6 @@ img{display:block;max-width:100%}
         <div class="card-head">
           <span class="idx">06</span>
           <h3>AI 新闻推送与迭代筛选</h3>
-          <span class="badge">日常在跑</span>
         </div>
         <p class="solves">
           <strong>解决的问题：</strong>AI 领域每天信息量太大，手动刷既费时间又容易漏掉重点；更麻烦的是兴趣点会变，固定的推荐流会越刷越不准。
@@ -491,20 +481,6 @@ img{display:block;max-width:100%}
 
   </div>
 </main>
-
-<section class="cta" id="contact">
-  <div class="wrap">
-    <div class="cta-in reveal">
-      <h2 class="cta-title">想看哪个，直接打开</h2>
-      <p class="cta-sub">在线产品、在线 Demo 与源码都在上面；下面是直达入口。</p>
-      <div class="cta-actions">
-        <a class="btn-main" href="https://ai-mbti.xyz/" target="_blank" rel="noopener">AI 创业者 MBTI</a>
-        <a class="btn-ghost" href="https://test-project-xgh.pages.dev/" target="_blank" rel="noopener">仓储管理系统 Demo</a>
-        <a class="btn-ghost" href="https://github.com/guoxianglina-ops/Newxgh-Test" target="_blank" rel="noopener">GitHub · 源码</a>
-      </div>
-    </div>
-  </div>
-</section>
 
 <footer class="footer">
   <div class="wrap">
