@@ -801,16 +801,28 @@ var WMS_API = (function() {
     if (local) { try { cache = JSON.parse(local); } catch(e) {} }
     if (cb) initCallbacks.push(cb);
     function _finish() { initReady = true; var cbs = initCallbacks.slice(); initCallbacks = []; for (var i = 0; i < cbs.length; i++) cbs[i](); }
-    // 先用一个请求探测后端：不可达就直接走本地模式，跳过 37 个必然失败的 ID 池请求
-    // （原来无论后端死活都会并行发 37 个请求，失败时会把首屏渲染一起拖住）
+
+    // 首屏立刻用本地数据渲染，不等后端。
+    // 原因：后端不可达时那个探测请求要 3 秒才失败（实测浏览器里 3.2s），
+    // 而原来渲染要等它，等于用户白等 3 秒。
+    _finish();
+
+    // 后台探测后端：可达就拉最新数据、分配 ID 池，并刷新当前页面内容。
+    // 不可达就直接走本地模式，跳过 37 个必然失败的 ID 池请求。
     _pull(function(reachable) {
       if (reachable === false) {
         _wms_api_mode = 'local';
         console.warn('[WMS] 后端不可达，已切换为本地存储模式（跳过 ID 池分配）');
-        _finish();
         return;
       }
-      _initIdPools(function() { _finish(); });
+      console.log('[WMS] 后端可达，同步数据并分配 ID 池');
+      _initIdPools(function() {});
+      try {
+        if (typeof nav === 'function') {
+          nav(sessionStorage.getItem('wms_curPage') || 'dashboard',
+              sessionStorage.getItem('wms_curTitle') || '首页仪表盘');
+        }
+      } catch (e) { console.warn('[WMS] 后端数据同步后刷新页面失败:', e); }
     });
   }
 
