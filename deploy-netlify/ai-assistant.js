@@ -1195,6 +1195,93 @@
     msgs.scrollTop = msgs.scrollHeight;
   }
 
+  // ===== 轻量 Markdown 渲染 =====
+  // 模型习惯用 Markdown 回答（**加粗**、| 表格 |、- 列表），但原来气泡里只做了
+  // text.replace(/\n/g,'<br>')，于是 ** 和 | 这些标记会原文照显示、表格也不成形。
+  // 下面是一个不依赖任何外部库的极简渲染，只覆盖模型实际会用的几种写法。
+  //
+  // 安全前提：模型输出属于不可信内容，一律「先转义、再拼标签」，
+  // 不直接把原文当 HTML 插进去。
+  function _mdInline(t) {
+    return t
+      .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+      .replace(/`([^`]+)`/g, '<code style="background:#f0f0f0;padding:1px 5px;border-radius:3px;font-size:12px">$1</code>');
+  }
+
+  var _mdTableStyle = 'border-collapse:collapse;margin:6px 0;font-size:12px;background:#fff';
+  var _mdThStyle = 'border:1px solid #e0e6f0;padding:4px 10px;background:#fafcff;text-align:left;font-weight:600';
+  var _mdTdStyle = 'border:1px solid #e0e6f0;padding:4px 10px';
+
+  function _mdToHtml(src) {
+    function esc(t) {
+      return String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+
+    var lines = String(src == null ? '' : src).split('\n');
+    var RE_ROW = /^\s*\|.*\|\s*$/;
+    var RE_SEP = /^\s*\|[\s:\-|]+\|\s*$/;
+    var out = [];
+    var i = 0;
+
+    while (i < lines.length) {
+      var line = lines[i];
+
+      // ---- 表格 ----
+      if (RE_ROW.test(line) && i + 1 < lines.length && RE_SEP.test(lines[i + 1])) {
+        function cells(l) {
+          return l.trim().replace(/^\||\|$/g, '').split('|').map(function (c) { return esc(c.trim()); });
+        }
+        var head = cells(line);
+        i += 2;
+        var html = '<table style="' + _mdTableStyle + '"><thead><tr>';
+        head.forEach(function (c) { html += '<th style="' + _mdThStyle + '">' + _mdInline(c) + '</th>'; });
+        html += '</tr></thead><tbody>';
+        while (i < lines.length && RE_ROW.test(lines[i])) {
+          var row = cells(lines[i]);
+          html += '<tr>';
+          for (var k = 0; k < head.length; k++) html += '<td style="' + _mdTdStyle + '">' + _mdInline(row[k] || '') + '</td>';
+          html += '</tr>';
+          i++;
+        }
+        html += '</tbody></table>';
+        out.push(html);
+        continue;
+      }
+
+      // ---- 分隔线 ----
+      if (/^\s*-{3,}\s*$/.test(line)) {
+        out.push('<hr style="border:none;border-top:1px solid #dde3ec;margin:10px 0">');
+        i++;
+        continue;
+      }
+
+      // ---- 无序列表 ----
+      if (/^\s*[-*]\s+/.test(line)) {
+        var items = '';
+        while (i < lines.length && /^\s*[-*]\s+/.test(lines[i])) {
+          items += '<li style="margin:2px 0">' + _mdInline(esc(lines[i].replace(/^\s*[-*]\s+/, ''))) + '</li>';
+          i++;
+        }
+        out.push('<ul style="margin:4px 0;padding-left:20px">' + items + '</ul>');
+        continue;
+      }
+
+      // ---- 标题（## / ###）----
+      var mh = line.match(/^\s*#{1,4}\s+(.*)$/);
+      if (mh) {
+        out.push('<div style="font-weight:600;margin:8px 0 4px">' + _mdInline(esc(mh[1])) + '</div>');
+        i++;
+        continue;
+      }
+
+      // ---- 普通行 ----
+      out.push('<div>' + (line.trim() === '' ? '&nbsp;' : _mdInline(esc(line))) + '</div>');
+      i++;
+    }
+
+    return out.join('');
+  }
+
   // ===== 添加消息 =====
   function _aiAddMsg(role, text) {
     var msgs = document.getElementById('ai-chat-messages');
@@ -1217,7 +1304,7 @@
       'display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">' + avatar + '</span>' +
       '<div style="background:' + bgColor + ';color:' + textColor + ';padding:10px 14px;border-radius:' + borderRadius + ';' +
       'max-width:80%;line-height:1.7;font-size:13px;word-break:break-word">' +
-      text.replace(/\n/g, '<br>') +
+      (isUser ? text.replace(/\n/g, '<br>') : _mdToHtml(text)) +
       '</div>';
 
     msgs.appendChild(div);
